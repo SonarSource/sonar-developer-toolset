@@ -6,7 +6,7 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
-  <name>m2e-sonar-build-plugin</name>
+  <name>m2e-error-disabler-plugin</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,0 +1,33 @@
+h2. Eclipse
+
+# Install Anyedit Eclipse Plugin
+# Restart Eclipse
+# Windows -> Preferences
+#* General
+#** Workspace
+#*** Text file encoding: UTF-8
+#** Editors -> AnyEdit Tools
+#*** Remove trailing whitespace
+#*** Create new line at the end of file
+#*** Convert tabs - spaces
+#*** Default convert mode on save: Tabs to spaces
+#* Java -> Code Style
+#** Clean Up -> Import... -> "sonar-cleanup.xml":https://github.com/SonarSource/sonar-settings/tree/master/eclipse/sonar-cleanup.xml
+#** Formatter -> Import... -> "sonar-formatter.xml":https://github.com/SonarSource/sonar-settings/tree/master/eclipse/sonar-formatter.xml
+#** Organize Imports -> Import... -> "sonar.importorder":https://github.com/SonarSource/sonar-settings/tree/master/eclipse/sonar.importorder
+#* XML -> XML Files -> Editor
+#** Indent using spaces
+#** Indentation size: 2
+
+h2. IntelliJ IDEA
+
+# Download "sonar-codestyle.xml":https://github.com/SonarSource/sonar-settings/tree/master/idea/sonar-codestyle.xml to 
+#* @~/Library/Preferences/IntellijIdea/codestyles/@ on Mac OS
+#* @~/.IntellijIdea/config/codeStyles/@ on Linux
+#* @~\.IntellijIdea\config\codeStyles\@ on Windows
+# (Re)start IntellIJ IDEA
+# File -> Settings
+#* File Encodings
+#** IDE Encoding: UTF-8
+#* Code Style
+#** Scheme: sonar

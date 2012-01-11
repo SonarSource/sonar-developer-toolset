@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Require-Bundle: org.eclipse.core.resources;bundle-version="3.4.0",org.
+ eclipse.core.runtime;bundle-version="3.4.0",org.eclipse.m2e.jdt;bundl
+ e-version="[1.0.0,1.1.0)",org.eclipse.m2e.core;bundle-version="[1.0.0
+ ,1.1.0)",org.eclipse.m2e.maven.runtime;bundle-version="[1.0.0,1.1.0)"
+Bundle-Vendor: SonarSource
+Bundle-Version: 1.0.0.201201111643
+Bundle-Name: SonarSource m2e errors disabler
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: com.sonarsource.m2e;singleton:=true
+Bundle-RequiredExecutionEnvironment: J2SE-1.5,JavaSE-1.6
+
