@@ -1,6 +1,7 @@
 h2. Eclipse
 
 # Install Anyedit Eclipse Plugin
+# Optional: if Maven projects do not define the profile 'm2e', then install the "M2E error disabler plugin":https://github.com/SonarSource/sonar-settings/tree/master/eclipse/m2e-error-disabler-plugin
 # Restart Eclipse
 # Windows -> Preferences
 #* General
