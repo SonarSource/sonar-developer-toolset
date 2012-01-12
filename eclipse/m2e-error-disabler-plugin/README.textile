@@ -2,17 +2,17 @@ This Eclipse plugin disables M2E errors when opening a Sonar project (core/plugi
 
 h2. Installation
 
-# Download plugin into eclipse directory "dropins"
+# download plugin into Eclipse directory "dropins"
 # (re)start Eclipse
-# verify that plugin installed as shown in attachment installed.png for Help -> About Eclipse -> Installation Details -> Plug-ins
-probably reload configuration of projects : Maven -> Update Project Configuration... -> Select All -> plugin is available
+# verify that plugin installed : Help -> About Eclipse -> Installation Details -> Plug-ins -> "SonarSource m2e errors disabler" is listed
+# probably reload configuration of projects : Maven -> Update Project Configuration... -> Select All -> OK
 # enjoy error-free workspace
 
 h2. Future
 
 In most cases it will be useless to use this M2E plugin when the following issues will be fixed :
 #* sonar-packaging-maven-plugin - "SONAR-3160":http://jira.codehaus.org/browse/SONAR-3160
-#* maven-license-plugin - http://code.google.com/p/maven-license-plugin/issues/detail?id=102
+#* maven-license-plugin - "issue#102":http://code.google.com/p/maven-license-plugin/issues/detail?id=102
 #* native2ascii-maven-plugin - "MOJO-1801":http://jira.codehaus.org/browse/MOJO-1801
 
 h2. Workaround
@@ -84,6 +84,7 @@ Adding the following profile to pom.xml replaces the need to install the M2E plu
                         <versionRange>[1.0,)</versionRange>
                         <goals>
                           <goal>unpack</goal>
+                          <goal>copy</goal>
                           <goal>copy-dependencies</goal>
                         </goals>
                       </pluginExecutionFilter>
@@ -113,4 +114,3 @@ Adding the following profile to pom.xml replaces the need to install the M2E plu
       </build>
 </profile>
 </pre>
-

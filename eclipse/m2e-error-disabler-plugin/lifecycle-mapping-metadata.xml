@@ -73,6 +73,7 @@
         <versionRange>[1.0,)</versionRange>
         <goals>
           <goal>unpack</goal>
+          <goal>copy</goal>
           <goal>copy-dependencies</goal>
         </goals>
       </pluginExecutionFilter>
