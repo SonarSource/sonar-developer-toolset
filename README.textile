@@ -27,8 +27,5 @@ h2. IntelliJ IDEA
 #* @~/.IntellijIdea/config/codeStyles/@ on Linux
 #* @~\.IntellijIdea\config\codeStyles\@ on Windows
 # (Re)start IntellIJ IDEA
-# File -> Settings
-#* File Encodings
-#** IDE Encoding: UTF-8
-#* Code Style
-#** Scheme: sonar
+# Use UTF-8 encoding: Project Settings -> File Encodings -> IDE Encoding: UTF-8
+# Change the code style: Project Settings -> Code Style -> Scheme: sonar
