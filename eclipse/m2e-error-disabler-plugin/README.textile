@@ -2,11 +2,11 @@ This Eclipse plugin disables M2E errors when opening a Sonar project (core/plugi
 
 h2. Installation
 
-# download plugin into Eclipse directory "dropins"
+# "Download plugin":https://github.com/SonarSource/sonar-settings/downloads into Eclipse directory "dropins"
 # (re)start Eclipse
-# verify that plugin installed : Help -> About Eclipse -> Installation Details -> Plug-ins -> "SonarSource m2e errors disabler" is listed
-# probably reload configuration of projects : Maven -> Update Project Configuration... -> Select All -> OK
-# enjoy error-free workspace
+# Verify that plugin installed : Help -> About Eclipse -> Installation Details -> Plug-ins -> "SonarSource m2e errors disabler" is listed
+# Probably reload configuration of projects : Maven -> Update Project Configuration... -> Select All -> OK
+# Enjoy error-free workspace
 
 h2. Future
 
