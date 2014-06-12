@@ -1,10 +1,8 @@
-Developer Toolset for Sonar-* Projects
-======================================
+# Developer Toolset for Sonar-* Projects
 
 Toolset for the developers contributing to http://github.com/SonarSource and http://github.com/SonarCommunity repositories.
 
-Git
----
+## Git
 
 If you have never used Git before, you need to do some setup first. Run the following commands so that Git knows your name and email.
 
@@ -20,6 +18,17 @@ Setup line endings preferences:
     # For Windows users
     git config --global core.autocrlf true
     git config --global core.safecrlf true
+
+## The (Almost) Unbreakable Build
+
+To be sure that code changes do not break the build in master branch, the git-push command must be executed to push commits. It's especially useful when many people work on the same codebase. 
+
+    # To be executed in the root directory of the Git repository
+    git-push
+    
+Codebase is forked, built then committed changes are pushed to the remote branch if the build passes. Forking in another directory allows developer to continue working and editing code in his workspace.
+
+Build automatically executes the script build.sh if it exists, else it executes 'mvn clean install'
 
 Code Style
 ----------
