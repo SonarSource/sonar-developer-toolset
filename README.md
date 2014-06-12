@@ -26,3 +26,5 @@ Code Style
 
 Eclipse settings are available in the directory eclipse/. 
 Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546) and import Eclipse settings files.
+
+![Intellij code style](/intellij/intellij-code-style.png)
