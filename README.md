@@ -5,6 +5,7 @@ Toolset for the developers contributing to http://github.com/SonarSource and htt
 
 Git
 ---
+
 If you have never used Git before, you need to do some setup first. Run the following commands so that Git knows your name and email.
 
     git config --global user.name "Your Name"
@@ -16,10 +17,9 @@ Setup line endings preferences:
     git config --global core.autocrlf input
     git config --global core.safecrlf true
 
-# For Windows users
-git config --global core.autocrlf true
-git config --global core.safecrlf true
-
+    # For Windows users
+    git config --global core.autocrlf true
+    git config --global core.safecrlf true
 
 Eclipse
 -------
