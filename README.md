@@ -21,8 +21,8 @@ Setup line endings preferences:
     git config --global core.autocrlf true
     git config --global core.safecrlf true
 
-Eclipse
--------
+Code Style
+----------
 
-Intellij IDEA
--------------
+Eclipse settings are available in the directory eclipse/. 
+Intellij IDEA users must install the plugin [http://plugins.jetbrains.com/plugin/?id=6546|Eclipse Code Formatter] and import Eclipse settings files.
