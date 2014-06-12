@@ -1,3 +1,0 @@
-h2. How to open Sonar projects (core/plugins) in IDE
-
-See the section "IDE support":http://docs.codehaus.org/display/SONAR/Hosting+on+the+Forge
