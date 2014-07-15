@@ -1,25 +1,37 @@
 #!/bin/bash
 # Unbreakable build
 
-function alert_user {
-echo "${1}"
-which -s growlnotify && growlnotify `basename $0` -m "${1}"
-}
-
-function exit_ko {
-alert_user "${1}"; exit 1
-}
-
-function exit_ok {
-alert_user "${1}"; exit 0
-}
-
-DIRNAME=${PWD##*/}_private
+REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
+REPO_NAME=${REPO_DIR##*/}
+BUILD_DIR=$(mktemp -d -t ${REPO_NAME} 2>/dev/null)
 LOCATION=$(pwd)
 REMOTE=${1:-origin}
 REMOTE_URL=$(git remote show -n ${REMOTE} | awk '/Fetch/ {print $3}')
 BRANCH=$(git symbolic-ref -q HEAD)
 BRANCH=${BRANCH##refs/heads/}
+
+
+function alert_user {
+  echo "${1}"
+  command -v notify-send >/dev/null 2>&1 && notify-send -t 3000 "${REPO_NAME}" "${1}"
+  command -v growlnotify >/dev/null 2>&1 && growlnotify "${REPO_NAME}" -m "${1}"
+}
+
+function exit_ko {
+  alert_user "${1}"; clean_build_dir; exit 1
+}
+
+function exit_ok {
+ alert_user "${1}"; exit 0
+}
+
+rollback_wip() {
+  git log -1 | grep -q -c "WIP" && git reset HEAD~1
+}
+
+clean_build_dir() {
+  rm -rf ${BUILD_DIR}
+}
 
 # Git black magic to pull rebase even with uncommited work in progress
 git fetch ${REMOTE}
@@ -27,16 +39,15 @@ git add -A; git ls-files --deleted -z | xargs -0 -I {} git rm {}; git commit -m 
 git rebase ${REMOTE}/${BRANCH}
 
 if [ "$?" -ne 0 ]; then
-git rebase --abort
-git log -n 1 | grep -q -c "wip" && git reset HEAD~1
-exit_ko "Unable to rebase. please pull or rebase and fix conflicts manually."
+  git rebase --abort
+  rollback_wip
+  exit_ko "Unable to rebase. please pull or rebase and fix conflicts manually."
 fi
-git log -n 1 | grep -q -c "wip" && git reset HEAD~1
+rollback_wip
 
 # Private build
-rm -Rf ../${DIRNAME}
-git clone --single-branch -slb "${BRANCH}" . ../${DIRNAME}
-cd ../${DIRNAME}
+git clone --single-branch -slb "${BRANCH}" . ${BUILD_DIR}
+cd ${BUILD_DIR}
 
 # Build
 if [ -f 'build.sh' ]
@@ -64,5 +75,5 @@ fi
 
 # Update working directory
 cd ${LOCATION} && git fetch ${REMOTE}
-rm -rf ../${DIRNAME}
+clean_build_dir
 exit_ok "Yet another successful build!"
