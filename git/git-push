@@ -26,7 +26,7 @@ function exit_ok {
 }
 
 rollback_wip() {
-  git log -1 | grep -q -c "WIP" && git reset HEAD~1
+  git log -1 | grep -q -c "wip" && git reset HEAD~1
 }
 
 clean_build_dir() {
