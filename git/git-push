@@ -14,6 +14,7 @@ BRANCH=${BRANCH##refs/heads/}
 function alert_user {
   echo "${1}"
   command -v notify-send >/dev/null 2>&1 && notify-send -t 3000 "${REPO_NAME}" "${1}"
+  command -v osascript >/dev/null 2>&1 && osascript -e "display notification \"${1}\" with title \"${REPO_NAME}\""
   command -v growlnotify >/dev/null 2>&1 && growlnotify "${REPO_NAME}" -m "${1}"
 }
 
