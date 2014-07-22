@@ -3,10 +3,10 @@
 
 REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
 REPO_NAME=${REPO_DIR##*/}
-BUILD_DIR=$(mktemp -d -t ${REPO_NAME} 2>/dev/null)
+BUILD_DIR=$(mktemp -d -t ${REPO_NAME}.XXXXXXXX 2>/dev/null)
 LOCATION=$(pwd)
 REMOTE=${1:-origin}
-REMOTE_URL=$(git remote show -n ${REMOTE} | awk '/Fetch/ {print $3}')
+REMOTE_URL=$(LC_ALL=en_US git remote show -n ${REMOTE} | awk '/Fetch/ {print $3}')
 BRANCH=$(git symbolic-ref -q HEAD)
 BRANCH=${BRANCH##refs/heads/}
 
