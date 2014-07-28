@@ -19,6 +19,11 @@ Setup line endings preferences:
     git config --global core.autocrlf true
     git config --global core.safecrlf true
 
+The merge is working pretty well on small repositories (with move and rename of files). But it's not working on large repositories as the detection of file renaming is O(n²), so we need to update some threshold (more explanations are available in this post : http://blogs.atlassian.com/2011/10/confluence_git_rename_merge_oh_my/) :
+
+    git config merge.renameLimit 10000
+    
+
 ## The (Almost) Unbreakable Build
 
 To be sure that code changes do not break the build in master branch, the [git-push](/git/git-push) command must be executed to push commits. It's especially useful when many people work on the same codebase. 
