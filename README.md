@@ -21,7 +21,7 @@ Setup line endings preferences:
 
 The merge is working pretty well on small repositories (with move and rename of files). But it's not working on large repositories as the detection of file renaming is O(n²), so we need to update some threshold (more explanations are available in this post : http://blogs.atlassian.com/2011/10/confluence_git_rename_merge_oh_my/) :
 
-    git config merge.renameLimit 10000
+    git config --global merge.renameLimit 10000
     
 
 ## The (Almost) Unbreakable Build
