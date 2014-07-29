@@ -23,6 +23,26 @@ The merge is working pretty well on small repositories (with move and rename of 
 
     git config --global merge.renameLimit 10000
     
+### Commit messages
+
+Commits must relate to a JIRA issue. Convention for messages inspired by http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html :
+
+* The first line must be short (50 chars or less) and auto-descriptive in a format "<JIRA KEY> <DESCRIPTION>", for example "SONAR-1937 Code review"
+* Write your commit message in the present tense: "Fix bug" and not "Fixed bug".
+* The second line is blank.
+* Next lines optionally define a short summary of changes (wrap them to about 72 chars or so).
+
+Example :
+
+    SONAR-2204,SONAR-2259 Fix URL encoding
+    
+    * For correct URL encoding we must encode parameters on lower level -
+    in Query itself, but not in concrete implementation of Connector,
+    because in Query we can distinguish concrete parts of URL.
+
+    * Moreover in this case any additional encoding routines in Connector
+    are useless, so were removed.
+
 
 ## The (Almost) Unbreakable Build
 
