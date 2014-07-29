@@ -23,7 +23,7 @@ The merge is working pretty well on small repositories (with move and rename of 
 
     git config --global merge.renameLimit 10000
     
-### Commit messages
+#### Commit messages
 
 Commits must relate to a JIRA issue. Convention for messages inspired by http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html :
 
