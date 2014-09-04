@@ -61,3 +61,11 @@ Eclipse settings are available in the directory [/eclipse](/eclipse).
 Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546) and import Eclipse settings files.
 
 ![Intellij code style](/intellij/intellij-code-style.png)
+
+## Plugin (Almost) Hot Deploy
+
+SonarQube 4.3 allows to quickly restart server when the development mode is enabled (sonar.dev=true in conf/sonar.properties). It's used to deploy a new version of the plugin under development. It's a bit faster than restarting the server in a standard way (JRuby environment is not reloaded). Execute the following command from plugin sources :
+
+    mvn package org.codehaus.sonar:sonar-dev-maven-plugin::upload -DsonarHome=/path/to/server/home -DsonarUrl=http://localhost:9000
+
+Note that the default value of sonarUrl is http://localhost:9000.
