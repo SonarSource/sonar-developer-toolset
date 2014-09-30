@@ -5,7 +5,7 @@ REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
 REPO_NAME=${REPO_DIR##*/}
 BUILD_DIR=$(mktemp -d -t ${REPO_NAME}.XXXXXXXX 2>/dev/null)
 LOCATION=$(pwd)
-REMOTE=${1:-origin}
+REMOTE='origin'
 REMOTE_URL=$(LC_ALL=en_US git remote show -n ${REMOTE} | awk '/Fetch/ {print $3}')
 BRANCH=$(git symbolic-ref -q HEAD)
 BRANCH=${BRANCH##refs/heads/}
@@ -53,11 +53,11 @@ cd ${BUILD_DIR}
 # Build
 if [ -f 'build.sh' ]
 then
-   sh ./build.sh
+   sh ./build.sh ${1}
 else
   if [ -f 'pom.xml' ]
   then
-    mvn clean install
+    mvn clean install ${1}
   else
     exit_ko "Don't know how to build. No pom.xml nor build.sh."
   fi
