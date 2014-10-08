@@ -46,10 +46,10 @@ Example :
 
 ## The (Almost) Unbreakable Build
 
-To be sure that code changes do not break the build in master branch, the [git-push](/git/git-push) command must be executed to push commits. It's especially useful when many people work on the same codebase. 
+To be sure that code changes do not break the build in master branch, the [spush](/git/spush) command must be executed to push commits. It's especially useful when many people work on the same codebase. 
 
     # To be executed in the root directory of the Git repository
-    git-push
+    spush
     
 Codebase is forked, built then committed changes are pushed to the remote branch if the build passes. Forking in another directory allows developer to continue working and editing code in his workspace.
 
