@@ -16,6 +16,7 @@ function alert_user {
   command -v notify-send >/dev/null 2>&1 && notify-send -t 3000 "${REPO_NAME}" "${1}"
   command -v osascript >/dev/null 2>&1 && osascript -e "display notification \"${1}\" with title \"${REPO_NAME}\""
   command -v growlnotify >/dev/null 2>&1 && growlnotify "${REPO_NAME}" -m "${1}"
+  command -v terminal-notifier >/dev/null 2>&1 && terminal-notifier -title "${REPO_NAME}" -message "${1}"
 }
 
 function exit_ko {
