@@ -1,4 +1,4 @@
-#Fri Jan 23 09:17:08 CET 2015
-/instance/org.eclipse.jdt.ui/org.eclipse.jdt.ui.ondemandthreshold=5
-/instance/org.eclipse.jdt.ui/org.eclipse.jdt.ui.staticondemandthreshold=5
+#Wed, 15 Apr 2015 10:47:16 +0200
+/instance/org.eclipse.jdt.ui/org.eclipse.jdt.ui.ondemandthreshold=999
+/instance/org.eclipse.jdt.ui/org.eclipse.jdt.ui.staticondemandthreshold=999
 
