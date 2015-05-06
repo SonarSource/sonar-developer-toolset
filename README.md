@@ -65,10 +65,10 @@ Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plug
 IDEA must also be manually configured for imports : Preferences > Editor > Code Style > Java > Imports
 * Class count to use import with '*'" -> 999 
 * Names count to use static import with '*' -> 999
-* > Import Layout
-** import all other imports
-** <blank line>
-** import static all other imports
+* Import Layout
+  * import all other imports
+  * <blank line>
+  * import static all other imports
 
 
 ## Plugin (Almost) Hot Deploy
