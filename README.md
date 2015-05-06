@@ -70,6 +70,7 @@ IDEA must also be manually configured for imports : Preferences > Editor > Code 
   * &lt;blank line&gt;
   * import static all other imports
 
+![Intellij imports](/intellij/intellij-imports.png)
 
 ## Plugin (Almost) Hot Deploy
 
