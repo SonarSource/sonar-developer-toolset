@@ -59,11 +59,16 @@ Build automatically executes the script `build.sh` if it exists, else it execute
 
 Eclipse settings are available in the directory [/eclipse](/eclipse). 
 Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546) and import Eclipse settings files. 
-They also have to manually configured the number of imports to higher value in order to never use wildcard imports : Preferences > Editor > Code Style > Java > Imports : 
-* Class count to use import with '*'" -> 999 
-* Names count to use static import with '*' -> 999
 
 ![Intellij code style](/intellij/intellij-code-style.png)
+
+IDEA must also be manually configured for imports : Preferences > Editor > Code Style > Java > Imports
+* Class count to use import with '*'" -> 999 
+* Names count to use static import with '*' -> 999
+* > Import Layout
+** import all other imports
+** <blank line>
+** import static all other imports
 
 
 ## Plugin (Almost) Hot Deploy
