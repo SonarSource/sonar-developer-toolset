@@ -67,7 +67,7 @@ IDEA must also be manually configured for imports : Preferences > Editor > Code 
 * Names count to use static import with '*' -> 999
 * Import Layout
   * import all other imports
-  * <blank line>
+  * &lt;blank line&gt;
   * import static all other imports
 
 
