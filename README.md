@@ -74,6 +74,10 @@ IDEA must also be manually configured for imports : Preferences > Editor > Code 
 
 ![Intellij imports](/intellij/intellij-imports.png)
 
+Eclipse 4.4 formatter support must be enable in recent versions of the Eclipse Code Formatter plugin:
+
+![enable Eclipse 4.4 formatter](/intellij/intellij-eclipse-formatter-4.4.png)
+
 ## Plugin (Almost) Hot Deploy
 
 SonarQube 4.3 allows to quickly restart server when the development mode is enabled (sonar.dev=true in conf/sonar.properties). It's used to deploy a new version of the plugin under development. It's a bit faster than restarting the server in a standard way (JRuby environment is not reloaded). Execute the following command from plugin sources :
