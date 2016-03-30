@@ -76,7 +76,7 @@ IDEA must also be manually configured for imports : Preferences > Editor > Code 
 
 Eclipse 4.4 formatter support must not be enable in order to use recent versions of the Eclipse Code Formatter plugin (at least 4.5.1):
 
-![enable Eclipse 4.5.1 formatter](/intellij/intellij-eclipse-formatter-4_5_1.png)
+![enable Eclipse 4.5.1 formatter](/intellij/intellij-eclipse-formatter_4_5_1.png)
 
 ## Plugin (Almost) Hot Deploy
 
