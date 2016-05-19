@@ -38,9 +38,7 @@ clean_build_dir() {
 # Git black magic to pull rebase even with uncommited work in progress
 git fetch ${REMOTE}
 git add -A; git ls-files --deleted -z | xargs -0 -I {} git rm {}; git commit -m "wip"
-git rebase ${REMOTE}/${BRANCH}
-
-if [ "$?" -ne 0 ]; then
+if ! git rebase ${REMOTE}/${BRANCH}; then
   git rebase --abort
   rollback_wip
   exit_ko "Unable to rebase. please pull or rebase and fix conflicts manually."
