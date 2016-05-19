@@ -65,8 +65,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Push
-git push ${REMOTE_URL} ${BRANCH}
-if [ $? -ne 0 ]; then
+if ! git push ${REMOTE_URL} ${BRANCH}; then
   exit_ko "Unable to push"
 fi
 
