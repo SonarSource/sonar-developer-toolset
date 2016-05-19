@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="true" context="java-members" deleted="false" description="Insert JUnit temp" enabled="true" name="temp">@Rule
+public TemporaryFolder temp = new TemporaryFolder();
+${:import(org.junit.rules.TemporaryFolder, org.junit.Rule)}
+</template><template autoinsert="true" context="java-members" deleted="false" description="Insert JUnit thrown rule" enabled="true" name="thrown">@Rule
+public ExpectedException thrown = ExpectedException.none();
+${:import(org.junit.rules.ExpectedException, org.junit.Rule)}
+</template></templates>
