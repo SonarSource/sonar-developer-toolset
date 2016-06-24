@@ -55,9 +55,33 @@ Codebase is forked, built then committed changes are pushed to the remote branch
 
 Build automatically executes the script `build.sh` if it exists, else it executes `mvn clean install`
 
-## Code Style
+## Eclipse Configuration
 
 Eclipse settings are available in the directory [/eclipse](/eclipse).
+
+### Imports
+
+[sonar-formatter.xml](/eclipse/sonar-formatter.xml):
+positions new lines, comments, spaces, parentheses, etc. To be imported in Window > Preferences > Java > Code Style > Formatter.
+
+[sonar.importorder](/eclipse/sonar.importorder):
+organizes the "import" lines. To be imported in Window > Preferences > Java > Code Style > Organize Imports.
+
+[sonar-cleanup.xml](/eclipse/sonar-cleanup.xml):
+cleans up the code, by organizing imports, formating source code, correcting indentation, etc.
+To be imported in Window > Preferences > Java > Code Style > Clean Up. If additionally you want to perform clean up at every "save" action, check the checkboxes in Window > Preferences > Java > Editor > Save Actions.
+
+[junit-templates.xml](/eclipse/junit-templates.xml) (optional):
+defines shortcuts "temp" and "thrown" in the unit tests. To be imported in Window > Preferences > Java > Editor > Template.
+
+### Additional Configuration
+
+In Window > Preferences > Maven > Errors/Warnings, set "Plugin execution not covered by lifecycle execution" to "Ignore". This will silence out error messages when importing your Maven projects
+
+On Windows, in Window > Preferences > General > Workspace, set "Text file encoding" to "UTF-8" and "New text file line delimiter" to "Unix".
+
+## Code Style Configuration for Intellij
+
 Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546) and import Eclipse settings files:
 * check the "Use the Eclipse code formatter" option and use [sonar-formatter.xml](/eclipse/sonar-formatter.xml) as the Eclipse Java Formatter config file
 * check the "From file" option in the "Import order" section and use [sonar.importorder](/eclipse/sonar.importorder)
