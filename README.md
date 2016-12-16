@@ -19,7 +19,7 @@ Setup line endings preferences:
     git config --global core.autocrlf true
     git config --global core.safecrlf true
 
-The merge is working pretty well on small repositories (with move and rename of files). But it's not working on large repositories as the detection of file renaming is O(nÂ²), so we need to update some threshold (more explanations are available in this post : http://blogs.atlassian.com/2011/10/confluence_git_rename_merge_oh_my/) :
+The merge is working pretty well on small repositories (with move and rename of files). But it's not working on large repositories as the detection of file renaming is O(n²), so we need to update some threshold (more explanations are available in this post : http://blogs.atlassian.com/2011/10/confluence_git_rename_merge_oh_my/) :
 
     git config --global merge.renameLimit 10000
 
@@ -109,3 +109,9 @@ SonarQube 4.3 allows to quickly restart server when the development mode is enab
     mvn package org.codehaus.sonar:sonar-dev-maven-plugin::upload -DsonarHome=/path/to/server/home -DsonarUrl=http://localhost:9000
 
 Note that the default value of sonarUrl is http://localhost:9000.
+
+### License
+
+Copyright 2008-2016 SonarSource.
+
+Licensed under the [GNU Lesser General Public License, Version 3.0](http://www.gnu.org/licenses/lgpl.txt)
