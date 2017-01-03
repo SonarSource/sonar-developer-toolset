@@ -80,6 +80,8 @@ In Window > Preferences > Maven > Errors/Warnings, set "Plugin execution not cov
 
 On Windows, in Window > Preferences > General > Workspace, set "Text file encoding" to "UTF-8" and "New text file line delimiter" to "Unix".
 
+In order to use the Maven Eclipse integration, you should download the os-maven-plugin and install it as an eclipse plugin (for example by putting it into your eclipse/plugins folder). The download link and installation steps are descriped in [the os-maven-plugin readme](https://github.com/trustin/os-maven-plugin/blob/master/README.md#user-content-issues-with-eclipse-m2e-or-other-ides).
+
 ## Code Style Configuration for Intellij
 
 Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546) and import Eclipse settings files:
