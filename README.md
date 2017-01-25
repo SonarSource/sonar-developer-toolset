@@ -28,7 +28,7 @@ The merge is working pretty well on small repositories (with move and rename of 
 Commits must relate to a JIRA issue. Convention for messages inspired by http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html :
 
 * The first line must be short (50 chars or less) and auto-descriptive in a format "<JIRA KEY> <DESCRIPTION>", for example "SONAR-1937 Code review"
-* Write your commit message in the present tense: "Fix bug" and not "Fixed bug".
+* Write your commit message in present imperative tense: "Fix bug" and not "Fixed bug".
 * The second line is blank.
 * Next lines optionally define a short summary of changes (wrap them to about 72 chars or so).
 
