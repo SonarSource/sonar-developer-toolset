@@ -27,7 +27,7 @@ The merge is working pretty well on small repositories (with move and rename of 
 
 Commits must relate to a JIRA issue. Convention for messages inspired by http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html :
 
-* The first line must be short (50 chars or less) and auto-descriptive in a format "<JIRA KEY> <DESCRIPTION>", for example "SONAR-1937 Code review"
+* The first line should be short (72 chars or less) and auto-descriptive in a format "<JIRA KEY> <DESCRIPTION>", for example "SONAR-1937 Code review"
 * Write your commit message in present imperative tense: "Fix bug" and not "Fixed bug".
 * The second line is blank.
 * Next lines optionally define a short summary of changes (wrap them to about 72 chars or so).
@@ -46,7 +46,7 @@ Example :
 
 ## The (Almost) Unbreakable Build
 
-To be sure that code changes do not break the build in master branch, the [spush](/git/spush) command must be executed to push commits. It's especially useful when many people work on the same codebase.
+To be sure that code changes do not break the build in master branch, the [spush](/git/spush) command can be executed to push commits. It's especially useful when many people work on the same codebase.
 
     # To be executed in the root directory of the Git repository
     spush
@@ -103,11 +103,3 @@ IDEA must also be manually configured for imports : Preferences > Editor > Code 
 Eclipse 4.4 formatter support must not be enable in order to use recent versions of the Eclipse Code Formatter plugin (at least 4.5.1):
 
 ![enable Eclipse 4.5.1 formatter](/intellij/intellij-eclipse-formatter_4_5_1.png)
-
-## Plugin (Almost) Hot Deploy
-
-SonarQube 4.3 allows to quickly restart server when the development mode is enabled (sonar.dev=true in conf/sonar.properties). It's used to deploy a new version of the plugin under development. It's a bit faster than restarting the server in a standard way (JRuby environment is not reloaded). Execute the following command from plugin sources :
-
-    mvn package org.codehaus.sonar:sonar-dev-maven-plugin::upload -DsonarHome=/path/to/server/home -DsonarUrl=http://localhost:9000
-
-Note that the default value of sonarUrl is http://localhost:9000.
