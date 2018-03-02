@@ -44,6 +44,22 @@ Example :
     are useless, so were removed.
 
 
+## Master and maintenance branches
+
+Master and the maintenance branches (named branch-X.Y) **must be releasable at any time**.
+When pushing a new HEAD, it must compile and pass Unit tests and QA
+  - create a Pull Request to test your changes and make sure all checks are green (they include build on Travis, run of QA and SonarQube code review)
+  - request Peer review
+
+Rebase on base branch and do not use merge commits
+  - merge commits pollute history
+  - merge commits create a new HEAD which hasn't run through all checks
+
+History can not be rewritten in those branches 
+  - no force push, ever!
+  - no fixup commit, no badly formatted commit. Check before merging, you won't be able to fix them
+
+
 ## Eclipse Configuration
 
 Eclipse settings are available in the directory [/eclipse](/eclipse).
