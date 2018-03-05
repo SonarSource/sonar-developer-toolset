@@ -60,6 +60,16 @@ History can not be rewritten in those branches
   - no fixup commit, no badly formatted commit. Check before merging, you won't be able to fix them
 
 
+## Coding guidelines
+
+#### Code format
+
+Follow the instructions below to correctly configure your IDE.
+
+#### Dos and Don'ts
+
+TODO
+
 ## Eclipse Configuration
 
 Eclipse settings are available in the directory [/eclipse](/eclipse).
