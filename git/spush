@@ -53,6 +53,9 @@ cd ${BUILD_DIR}
 if [ -f 'build.sh' ]
 then
   sh ./build.sh ${1}
+elif [ -f 'build.gradle' ]
+then
+  ./gradlew build ${1}
 elif [ -f 'pom.xml' ]
 then
   mvn clean install ${1}
