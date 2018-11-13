@@ -97,6 +97,8 @@ Go to `Preferences > Editor > Code Style > Java > Tabs and Indents` and update:
 
 ![Intellij imports](/intellij/intellij-indents.png)
 
+Go to `Preferences > Editor > General` and check the option `Ensure line feed at file end on Save` (under the `Other` section).
+
 IDEA must also be manually configured for imports : `Preferences > Editor > Code Style > Java > Imports`
 * Class count to use import with '*'" -> 999
 * Names count to use static import with '*' -> 999
