@@ -90,7 +90,14 @@ Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plug
 
 ![Intellij code style](/intellij/intellij-code-style.png)
 
-IDEA must also be manually configured for imports : Preferences > Editor > Code Style > Java > Imports
+Go to `Preferences > Editor > Code Style > Java > Tabs and Indents` and update:
+* `Tab size: 2`
+* `Indent: 2`
+* `Continuation indent: 2`
+
+![Intellij imports](/intellij/intellij-indents.png)
+
+IDEA must also be manually configured for imports : `Preferences > Editor > Code Style > Java > Imports`
 * Class count to use import with '*'" -> 999
 * Names count to use static import with '*' -> 999
 * Import Layout
