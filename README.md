@@ -43,6 +43,7 @@ Example :
     * Moreover in this case any additional encoding routines in Connector
     are useless, so were removed.
 
+If the change concerns a documentation-only change, then prefix it with "DOC ".
 
 ## The (Almost) Unbreakable Build
 
