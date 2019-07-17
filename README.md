@@ -97,7 +97,19 @@ Go to `Preferences > Editor > Code Style > Java > Tabs and Indents` and update:
 * `Indent: 2`
 * `Continuation indent: 2`
 
-![Intellij imports](/intellij/intellij-indents.png)
+![Intellij imports](/intellij/intellij-java-indents.png)
+
+Go to `Preferences > Editor > Code Style > XML > Tabs and Indents` and update:
+* `Tab size: 2`
+* `Indent: 2`
+* `Continuation indent: 2`
+
+![Intellij XML code style other](/intellij/intellij-xml-indents.png)
+
+Then go to `Preferences > Editor > Code Style > XML > Other` and check:
+* `Keep line breaks in text`
+
+![Intellij XML code style other](/intellij/intellij-xml-other.png)
 
 IDEA must also be manually configured for imports : `Preferences > Editor > Code Style > Java > Imports`
 * Class count to use import with '*'" -> 999
