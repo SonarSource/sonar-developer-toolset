@@ -106,8 +106,10 @@ Go to `Preferences > Editor > Code Style > XML > Tabs and Indents` and update:
 
 ![Intellij XML code style other](/intellij/intellij-xml-indents.png)
 
-Then go to `Preferences > Editor > Code Style > XML > Other` and check:
+Then go to `Preferences > Editor > Code Style > XML > Other` and set/check:
+* `Hard wrap at 140`
 * `Keep line breaks in text`
+* `Keep white spaces`
 
 ![Intellij XML code style other](/intellij/intellij-xml-other.png)
 
