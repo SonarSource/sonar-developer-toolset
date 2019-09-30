@@ -92,6 +92,8 @@ Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plug
 
 Go to `Preferences > Editor > General` and check the option `Ensure line feed at file end on Save` (under the `Other` section).
 
+Go to `Preferences > Editor > Code Style > Java > Wrapping and Braces > Method declaration parameter` and uncheck `Align when multiline`
+
 Go to `Preferences > Editor > Code Style > Java > Tabs and Indents` and update:
 * `Tab size: 2`
 * `Indent: 2`
