@@ -2,6 +2,18 @@
 
 Toolset for the developers contributing to http://github.com/SonarSource and http://github.com/SonarCommunity repositories.
 
+## SonarLint
+
+[Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is a core principle at SonarSource. Installing [SonarLint](http://sonarlint.org/) in your favorite IDE is strongly recommended. Any feedback should be provided on:
+* for SonarSourcer: the [category Dogfooding>SonarLint of the internal forum](https://discuss.sonarsource.com/c/dogfood/sl) and/or the Slack channel #sonarlint. 
+* for community: the [SonarSource forum](https://community.sonarsource.com/), using the tag `sonarlint`.
+
+The "connected mode" feature should also be enabled and configured with https://next.sonarqube.com/ or https://sonarcloud.io, depending on projects.
+
+Intellij users should also rely on the development marketplace in order to experiment latest milestones:
+* Open Settings → Plugins → Manage plugins repositories
+* Add a custom plugin repository pointing to https://repox.jfrog.io/repox/sonarsource-public-builds/org/sonarsource/sonarlint/intellij/sonarlint-intellij/updatePlugins.xml
+
 ## Git
 
 If you have never used Git before, you need to do some setup first. Run the following commands so that Git knows your name and email.
