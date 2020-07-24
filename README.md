@@ -112,6 +112,8 @@ Go to `Preferences > Editor > Code Style > Java > Tabs and Indents` and update:
 * `Indent: 2`
 * `Continuation indent: 2`
 
+Go to `Preferences > Editor > Code Style > Java > JavaDoc > Other` and uncheck `Generate "<p>" on empty lines`
+
 ![Intellij imports](/intellij/intellij-java-indents.png)
 
 Go to `Preferences > Editor > Code Style > XML > Tabs and Indents` and update:
