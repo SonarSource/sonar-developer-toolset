@@ -92,7 +92,7 @@ Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plug
 
 ![Intellij code style](/intellij/intellij-code-style.png)
 
-Go to `Preferences > Editor > General` and check the option `Ensure line feed at file end on Save` (under the `Other` section).
+Go to `Preferences > Editor > General` and check the option `Ensure every saved file ends with a line break` (under the `On Save` section).
 
 Go to `Preferences > Editor > Code Style > Java > Wrapping and Braces > Method declaration parameter` and uncheck `Align when multiline`
 
