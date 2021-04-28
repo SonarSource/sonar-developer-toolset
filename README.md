@@ -90,36 +90,58 @@ Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plug
 * check the "Use the Eclipse code formatter" option and use [sonar-formatter.xml](/eclipse/sonar-formatter.xml) as the Eclipse Java Formatter config file
 * check the "From file" option in the "Import order" section and use [sonar.importorder](/eclipse/sonar.importorder)
 
-![Intellij code style](/intellij/intellij-code-style.png)
+You can either import the code style settings to IntelliJ IDEA by simply importing [this scheme](intellij/codestyle_sonar_developer_toolset.xml)
+in IDEA's code style settings, or you can apply the settings manually (see below). The result should be the same.
 
-Go to `Preferences > Editor > General` and check the option `Ensure every saved file ends with a line break` (under the `On Save` section).
+![Intellij code style](intellij/intellij-code-style.png)
 
-Go to `Preferences > Editor > Code Style > Java > Wrapping and Braces > Method declaration parameter` and uncheck `Align when multiline`
+Go to `Preferences/Settings > Editor > General` and check the option `Ensure every saved file ends with a line break` (under the `On Save` section).
 
-Go to `Preferences > Editor > Code Style > Java > Tabs and Indents` and update:
+Go to `Preferences/Settings > Editor > Code Style > Java > Wrapping and Braces > Method declaration parameter` and uncheck `Align when multiline`
+
+Go to `Preferences/Settings > Editor > Code Style > Java > Tabs and Indents` and update:
 * `Tab size: 2`
 * `Indent: 2`
 * `Continuation indent: 2`
 
-Go to `Preferences > Editor > Code Style > Java > JavaDoc > Other` and uncheck `Generate "<p>" on empty lines`
+Go to `Preferences/Settings > Editor > Code Style > Java > JavaDoc > Other` and uncheck `Generate "<p>" on empty lines`
 
-![Intellij imports](/intellij/intellij-java-indents.png)
+![Intellij imports](intellij/intellij-java-indents.png)
 
-Go to `Preferences > Editor > Code Style > XML > Tabs and Indents` and update:
+Go to `Preferences/Settings > Editor > Code Style > Kotlin > Tabs and Indents` and update:
+* `Continuation indent: 4`
+
+![Kotlin indents](intellij/intellij-kotlin-indents.png)
+
+Go to `Preferences/Settings > Editor > Code Style > Kotlin > Imports` and update:
+* Check `Use single name import` in `Top-Level Symbols`
+* Check `Use single name import` in `Java Statics and Enum Members`
+* Remove all entries from the list `Packages to Use Imports with '*'`
+
+![Kotlin imports](intellij/intellij-kotlin-imports.png)
+
+Go to `Preferences/Settings > Editor > Code Style > Kotlin > Other` and update:
+* Check `Use trailing comma`
+  
+![Kotlin other](intellij/intellij-kotlin-other.png)
+
+For Kotlin, we use the default 140 character line length.
+
+Go to `Preferences/Settings > Editor > Code Style > XML > Tabs and Indents` and update:
 * `Tab size: 2`
 * `Indent: 2`
 * `Continuation indent: 2`
 
-![Intellij XML code style other](/intellij/intellij-xml-indents.png)
+![Intellij XML code style other](intellij/intellij-xml-indents.png)
 
-Then go to `Preferences > Editor > Code Style > XML > Other` and set/check:
+Then go to `Preferences/Settings > Editor > Code Style > XML > Other` and set/check:
 * `Hard wrap at 140`
 * `Keep line breaks in text`
 * `Keep white spaces`
 
-![Intellij XML code style other](/intellij/intellij-xml-other.png)
+![Intellij XML code style other](intellij/intellij-xml-other.png)
 
-IDEA must also be manually configured for imports : `Preferences > Editor > Code Style > Java > Imports`
+IDEA must also be manually configured for imports : `Preferences/Settings > Editor > Code Style > Java > Imports`
 * Class count to use import with '*'" -> 999
 * Names count to use static import with '*' -> 999
 * Import Layout
@@ -127,8 +149,8 @@ IDEA must also be manually configured for imports : `Preferences > Editor > Code
   * &lt;blank line&gt;
   * import static all other imports
 
-![Intellij imports](/intellij/intellij-imports.png)
+![Intellij imports](intellij/intellij-imports.png)
 
 Eclipse 4.4 formatter support must not be enable in order to use recent versions of the Eclipse Code Formatter plugin (at least 4.5.1):
 
-![enable Eclipse 4.5.1 formatter](/intellij/intellij-eclipse-formatter_4_5_1.png)
+![enable Eclipse 4.5.1 formatter](intellij/intellij-eclipse-formatter_4_5_1.png)
