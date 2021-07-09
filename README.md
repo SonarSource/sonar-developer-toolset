@@ -148,7 +148,8 @@ IDEA must also be manually configured for imports : `Preferences/Settings > Edit
   * import all other imports
   * &lt;blank line&gt;
   * import static all other imports
-
+Remove both lines from `Packages to Use Import with '*'`
+    
 ![Intellij imports](intellij/intellij-imports.png)
 
 Eclipse 4.4 formatter support must not be enable in order to use recent versions of the Eclipse Code Formatter plugin (at least 4.5.1):
