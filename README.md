@@ -155,3 +155,7 @@ Remove both lines from `Packages to Use Import with '*'`
 Eclipse 4.4 formatter support must not be enable in order to use recent versions of the Eclipse Code Formatter plugin (at least 4.5.1):
 
 ![enable Eclipse 4.5.1 formatter](intellij/intellij-eclipse-formatter_4_5_1.png)
+
+Then go to `Preferences/Settings > Editor > General > Auto import` and check "Optimize imports on the fly" for Java:
+
+![image](https://user-images.githubusercontent.com/50145663/135304815-0b51f1da-16d4-4fc7-a278-a13067e78d7c.png)
