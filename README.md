@@ -144,11 +144,11 @@ Then go to `Preferences/Settings > Editor > Code Style > XML > Other` and set/ch
 IDEA must also be manually configured for imports : `Preferences/Settings > Editor > Code Style > Java > Imports`
 * Class count to use import with '*'" -> 999
 * Names count to use static import with '*' -> 999
+* Remove both lines from `Packages to Use Import with '*'`
 * Import Layout
   * import all other imports
   * &lt;blank line&gt;
   * import static all other imports
-Remove both lines from `Packages to Use Import with '*'`
     
 ![Intellij imports](intellij/intellij-imports.png)
 
