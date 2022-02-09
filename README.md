@@ -86,7 +86,7 @@ In order to use the Maven Eclipse integration, you should download the os-maven-
 
 ## Code Style Configuration for Intellij
 
-Intellij IDEA users must install the plugin [Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546) and import Eclipse settings files:
+Intellij IDEA users must install the plugin [Adapter for Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546) and import Eclipse settings files:
 * check the "Use the Eclipse code formatter" option and use [sonar-formatter.xml](/eclipse/sonar-formatter.xml) as the Eclipse Java Formatter config file
 * check the "From file" option in the "Import order" section and use [sonar.importorder](/eclipse/sonar.importorder)
 
