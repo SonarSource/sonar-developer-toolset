@@ -91,7 +91,7 @@ Intellij IDEA users must install the plugin [Adapter for Eclipse Code Formatter]
 * check the "From file" option in the "Import order" section and use [sonar.importorder](/eclipse/sonar.importorder)
 
 You can either import the code style settings to IntelliJ IDEA by simply importing [this scheme](intellij/codestyle_sonar_developer_toolset.xml)
-in IDEA's code style settings (Editor > 'Code Style' > Java > 'Scheme:' > ⚙️  > 'Import Scheme' > 'IntelliJ IDEA code style XML'), or you can apply the settings manually (see below). The result should be the same.
+in IDEA's code style settings (`Editor > 'Code Style' > Java > 'Scheme:' > ⚙️  > 'Import Scheme' > 'IntelliJ IDEA code style XML'`), or you can apply the settings manually (see below). The result should be the same.
 
 ![Intellij code style](intellij/intellij-code-style.png)
 
