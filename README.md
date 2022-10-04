@@ -141,6 +141,15 @@ Then go to `Preferences/Settings > Editor > Code Style > XML > Other` and set/ch
 
 ![Intellij XML code style other](intellij/intellij-xml-other.png)
 
+In order to correctly format build.gradle files, code style for Groovy has to be set.
+
+Then go to `Preferences/Settings > Editor > Code Style > Groovy` and set/check:
+* `Tab size: 2`
+* `Indent: 2`
+* `Continuation indent: 2`
+
+![Intellij Groovy code style](intellij/intellij-groovy-indents.png)
+
 IDEA must also be manually configured for imports : `Preferences/Settings > Editor > Code Style > Java > Imports`
 * Class count to use import with '*'" -> 999
 * Names count to use static import with '*' -> 999
