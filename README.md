@@ -141,6 +141,8 @@ Then go to `Preferences/Settings > Editor > Code Style > XML > Other` and set/ch
 
 ![Intellij XML code style other](intellij/intellij-xml-other.png)
 
+In order to correctly format build.gradle files, code style for Groovy has to be set.
+
 Then go to `Preferences/Settings > Editor > Code Style > Groovy` and set/check:
 * `Tab size: 2`
 * `Indent: 2`
