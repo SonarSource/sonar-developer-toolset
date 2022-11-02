@@ -164,3 +164,9 @@ IDEA must also be manually configured for imports : `Preferences/Settings > Edit
 Then go to `Preferences/Settings > Editor > General > Auto import` and check "Optimize imports on the fly" for Java:
 
 ![image](https://user-images.githubusercontent.com/50145663/135304815-0b51f1da-16d4-4fc7-a278-a13067e78d7c.png)
+
+## (Optional) Built Configuration for Intellij
+
+If you experience problems with the build-in build system (*Build* ➡️ *Rebuild Project*), you should delegate the build to maven. Make sure, to skip tests during the build:
+
+![Intellij-maven-runner](intellij/intellij-maven-runner.png)
