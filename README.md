@@ -165,7 +165,7 @@ Then go to `Preferences/Settings > Editor > General > Auto import` and check "Op
 
 ![image](https://user-images.githubusercontent.com/50145663/135304815-0b51f1da-16d4-4fc7-a278-a13067e78d7c.png)
 
-## (Optional) Built Configuration for Intellij
+## (Optional) Build Configuration for Intellij
 
 If the project uses maven and you experience problems with the built-in build system (*Build* ➡️ *Rebuild Project*) like long build times or build failures, you should [delegate the build to maven](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#delegate_to_maven). Make sure to skip tests during the build:
 
