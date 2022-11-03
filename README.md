@@ -167,6 +167,6 @@ Then go to `Preferences/Settings > Editor > General > Auto import` and check "Op
 
 ## (Optional) Built Configuration for Intellij
 
-If you experience problems with the built-in build system (*Build* ➡️ *Rebuild Project*), you should delegate the build to maven. Make sure to skip tests during the build:
+If the project uses maven and you experience problems with the built-in build system (*Build* ➡️ *Rebuild Project*) like long build times or build failures, you should [delegate the build to maven](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#delegate_to_maven). Make sure to skip tests during the build:
 
 ![Intellij-maven-runner](intellij/intellij-maven-runner.png)
