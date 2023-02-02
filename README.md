@@ -57,6 +57,13 @@ Example :
 
 If the change concerns a documentation-only change, then prefix it with "DOC ".
 
+## GitHub Configuration
+
+The following points must be respected in the GitHub account settings:
+* The sonarsource email address must be set as primary
+* Uncheck "Keep my email addresses private"
+* The same name must be used in the profile and in the local config key user.name
+
 ## Eclipse Configuration
 
 Eclipse settings are available in the directory [/eclipse](/eclipse).
