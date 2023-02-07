@@ -5,7 +5,7 @@ Toolset for the developers contributing to http://github.com/SonarSource and htt
 ## SonarLint
 
 [Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is a core principle at SonarSource. Installing [SonarLint](http://sonarlint.org/) in your favorite IDE is strongly recommended. Any feedback should be provided on:
-* for SonarSourcer: the [category Dogfooding>SonarLint of the internal forum](https://discuss.sonarsource.com/c/dogfood/sl) and/or the Slack channel #sonarlint. 
+* for SonarSourcer: the [category Dogfooding>SonarLint of the internal forum](https://discuss.sonarsource.com/c/dogfood/sl) and/or the Slack channel [#team-sonarlint](https://sonarsource.slack.com/archives/CFX1J97GT). 
 * for community: the [SonarSource forum](https://community.sonarsource.com/), using the tag `sonarlint`.
 
 The "connected mode" feature should also be enabled and configured with https://next.sonarqube.com/ or https://sonarcloud.io, depending on projects.
