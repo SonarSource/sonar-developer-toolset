@@ -171,3 +171,15 @@ IDEA must also be manually configured for imports : `Preferences/Settings > Edit
 Then go to `Preferences/Settings > Editor > General > Auto import` and check "Optimize imports on the fly" for Java:
 
 ![image](https://user-images.githubusercontent.com/50145663/135304815-0b51f1da-16d4-4fc7-a278-a13067e78d7c.png)
+
+For Javascript (Typescript) 
+
+Setup imports to sort correctly:
+![Intellij typescript](intellij/intellij-typescript-imports.png)
+
+We use a tool called **Prettier**. In order to ensure it functions correctly, install the [Prettier plugin](https://www.jetbrains.com/help/idea/prettier.html).
+Once installed set the files as such:
+![Intellij javascript prettier](intellij/intellij-javascript-prettier.png)
+
+Then to make sure prettier is run correctly, modify the on save actions:
+![Intellij javascript onsave](intellij/intellij-javscript-actionsonsave.png)
