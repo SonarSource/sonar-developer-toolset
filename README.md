@@ -78,7 +78,12 @@ organizes the "import" lines. To be imported in Window > Preferences > Java > Co
 
 [sonar-cleanup.xml](/eclipse/sonar-cleanup.xml):
 cleans up the code, by organizing imports, formating source code, correcting indentation, etc.
-To be imported in Window > Preferences > Java > Code Style > Clean Up. If additionally you want to perform clean up at every "save" action, check the checkboxes in Window > Preferences > Java > Editor > Save Actions.
+To be imported in Window > Preferences > Java > Code Style > Clean Up.
+
+In Windows > Preferences > Java > Editor > Save Actions, check the checkboxes to perform the clean
+up at every "save" action. The "additional actions" displayed should be configured as well.
+
+![Eclipse Auto Save](eclipse/eclipse-Java-save-action.png)
 
 [junit-templates.xml](/eclipse/junit-templates.xml) (optional):
 defines shortcuts "temp" and "thrown" in the unit tests. To be imported in Window > Preferences > Java > Editor > Template.
