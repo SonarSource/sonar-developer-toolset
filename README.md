@@ -14,6 +14,11 @@ Toolset for the developers contributing to http://github.com/SonarSource and htt
 
 The "connected mode" feature should also be enabled and configured with https://next.sonarqube.com/ or https://sonarcloud.io, depending on projects.
 
+Eclipse users should also rely on the dogfooding Eclipse Update Site in order to experiment latest milestones:
+* Help → Install New Software ...
+* Add a repository pointing to https://binaries.sonarsource.com/SonarLint-for-Eclipse/dogfood/
+* Initially install the plug-in, to check for updates: Help → Check for Updates
+
 Intellij users should also rely on the development marketplace in order to experiment latest milestones:
 * Open Settings → Plugins → Manage plugins repositories
 * Add a custom plugin repository pointing to https://repox.jfrog.io/repox/sonarsource-public-builds/org/sonarsource/sonarlint/intellij/sonarlint-intellij/updatePlugins.xml
