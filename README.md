@@ -197,3 +197,9 @@ Once installed set the files as such:
 
 Then to make sure prettier is run correctly, modify the on save actions:
 ![Intellij javascript onsave](intellij/intellij-javscript-actionsonsave.png)
+
+## (Optional) Build Configuration for Intellij
+
+If the project uses maven and you experience problems with the built-in build system (*Build* ➡️ *Rebuild Project*) like long build times or build failures, you should [delegate the build to maven](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#delegate_to_maven). Make sure to skip tests during the build:
+
+![Intellij-maven-runner](intellij/intellij-maven-runner.png)
