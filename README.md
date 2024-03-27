@@ -5,10 +5,19 @@ Toolset for the developers contributing to http://github.com/SonarSource and htt
 ## SonarLint
 
 [Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) is a core principle at SonarSource. Installing [SonarLint](http://sonarlint.org/) in your favorite IDE is strongly recommended. Any feedback should be provided on:
-* for SonarSourcer: the [category Dogfooding>SonarLint of the internal forum](https://discuss.sonarsource.com/c/dogfood/sl) and/or the Slack channel #sonarlint. 
+* for SonarSourcer: the [category Dogfooding>SonarLint of the internal forum](https://discuss.sonarsource.com/c/dogfood/sl) and/or the Slack channels:\
+  SonarLint for Eclipse: [#squad-ide-eclipse](https://sonarsource.slack.com/archives/C03QE05EX26)\
+  SonarLint for IntelliJ: [#squad-ide-intellij-family](https://sonarsource.slack.com/archives/C03QDTTJ5JP)\
+  SonarLint for Visual Studio: [#squad-ide-visualstudio](https://sonarsource.slack.com/archives/C03PE8P8TK6)\
+  SonarLint for Visual Studio Code: [#squad-ide-vscode](https://sonarsource.slack.com/archives/C03M0AJ3BKR)
 * for community: the [SonarSource forum](https://community.sonarsource.com/), using the tag `sonarlint`.
 
 The "connected mode" feature should also be enabled and configured with https://next.sonarqube.com/ or https://sonarcloud.io, depending on projects.
+
+Eclipse users should also rely on the dogfooding Eclipse Update Site in order to experiment latest milestones:
+* Help → Install New Software ...
+* Add a repository pointing to https://binaries.sonarsource.com/SonarLint-for-Eclipse/dogfood/
+* Initially install the plug-in, to check for updates: Help → Check for Updates
 
 Intellij users should also rely on the development marketplace in order to experiment latest milestones:
 * Open Settings → Plugins → Manage plugins repositories
@@ -57,6 +66,13 @@ Example :
 
 If the change concerns a documentation-only change, then prefix it with "DOC ".
 
+## GitHub Configuration
+
+The following points must be respected in the GitHub account settings:
+* If using your personal Github Account, the sonarsource email address must be set as primary
+* Uncheck "Keep my email addresses private"
+* The same name must be used in the Github profile and in the local git config key user.name
+
 ## Eclipse Configuration
 
 Eclipse settings are available in the directory [/eclipse](/eclipse).
@@ -71,7 +87,12 @@ organizes the "import" lines. To be imported in Window > Preferences > Java > Co
 
 [sonar-cleanup.xml](/eclipse/sonar-cleanup.xml):
 cleans up the code, by organizing imports, formating source code, correcting indentation, etc.
-To be imported in Window > Preferences > Java > Code Style > Clean Up. If additionally you want to perform clean up at every "save" action, check the checkboxes in Window > Preferences > Java > Editor > Save Actions.
+To be imported in Window > Preferences > Java > Code Style > Clean Up.
+
+In Windows > Preferences > Java > Editor > Save Actions, check the checkboxes to perform the clean
+up at every "save" action. The "additional actions" displayed should be configured as well.
+
+![Eclipse Auto Save](eclipse/eclipse-Java-save-action.png)
 
 [junit-templates.xml](/eclipse/junit-templates.xml) (optional):
 defines shortcuts "temp" and "thrown" in the unit tests. To be imported in Window > Preferences > Java > Editor > Template.
@@ -164,6 +185,18 @@ IDEA must also be manually configured for imports : `Preferences/Settings > Edit
 Then go to `Preferences/Settings > Editor > General > Auto import` and check "Optimize imports on the fly" for Java:
 
 ![image](https://user-images.githubusercontent.com/50145663/135304815-0b51f1da-16d4-4fc7-a278-a13067e78d7c.png)
+
+For Javascript (Typescript) 
+
+Setup imports to sort correctly:
+![Intellij typescript](intellij/intellij-typescript-imports.png)
+
+We use a tool called **Prettier**. In order to ensure it functions correctly, install the [Prettier plugin](https://www.jetbrains.com/help/idea/prettier.html).
+Once installed set the files as such:
+![Intellij javascript prettier](intellij/intellij-javascript-prettier.png)
+
+Then to make sure prettier is run correctly, modify the on save actions:
+![Intellij javascript onsave](intellij/intellij-javscript-actionsonsave.png)
 
 ## (Optional) Build Configuration for Intellij
 
