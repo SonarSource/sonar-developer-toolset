@@ -208,8 +208,6 @@ Go to `Preferences/Settings > Editor > Code Style > Scala > Imports` and update:
 * Class count to use import with '_' -> 999
 * Ensure `Merge imports with the same prefix into one statement` is checked
 
-Then go to `Preferences/Settings > Editor > General > Auto import` and uncheck "Optimize imports on the fly" for Scala. This is necessary because there are some imports that are not explicitly used in the code but are necessary for the code to compile.
-
 ## (Optional) Build Configuration for Intellij
 
 If the project uses maven and you experience problems with the built-in build system (*Build* ➡️ *Rebuild Project*) like long build times or build failures, you should [delegate the build to maven](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#delegate_to_maven). Make sure to skip tests during the build:
