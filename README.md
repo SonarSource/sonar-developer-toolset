@@ -202,6 +202,12 @@ Once installed set the files as such:
 Then to make sure prettier is run correctly, modify the on save actions:
 ![Intellij javascript onsave](intellij/intellij-javscript-actionsonsave.png)
 
+For Scala:
+
+Go to `Preferences/Settings > Editor > Code Style > Scala > Imports` and update:
+* Class count to use import with '_' -> 999
+* Ensure `Merge imports with the same prefix into one statement` is checked
+
 ## (Optional) Build Configuration for Intellij
 
 If the project uses maven and you experience problems with the built-in build system (*Build* ➡️ *Rebuild Project*) like long build times or build failures, you should [delegate the build to maven](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#delegate_to_maven). Make sure to skip tests during the build:
