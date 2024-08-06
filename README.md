@@ -207,6 +207,9 @@ For Scala:
 Go to `Preferences/Settings > Editor > Code Style > Scala > Imports` and update:
 * Class count to use import with '_' -> 999
 * Ensure `Merge imports with the same prefix into one statement` is checked
+* Ensure to have the following `Import Layout` (it should be the default):
+
+![Intellij scala import layout](intellij/intellij-scala-import-layout.png)
 
 ## (Optional) Build Configuration for Intellij
 
