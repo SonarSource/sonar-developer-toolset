@@ -1,5 +1,5 @@
-<code_scheme name="sonar-developer-toolset" version="173">
-  <option name="RIGHT_MARGIN" value="140" />
+<code_scheme name="sonar-developer-toolset" version="174">
+  <option name="RIGHT_MARGIN" value="180" />
   <JavaCodeStyleSettings>
     <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999" />
     <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999" />
@@ -41,6 +41,7 @@
     </indentOptions>
   </codeStyleSettings>
   <codeStyleSettings language="kotlin">
+    <option name="RIGHT_MARGIN" value="140" />
     <option name="CALL_PARAMETERS_WRAP" value="5" />
     <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
     <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />

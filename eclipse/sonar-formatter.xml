@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<profiles version="23">
-<profile kind="CodeFormatterProfile" name="SonarQube" version="23">
+<profiles version="24">
+<profile kind="CodeFormatterProfile" name="SonarQube" version="24">
 <setting id="org.eclipse.jdt.core.formatter.align_arrows_in_switch_on_columns" value="false"/>
 <setting id="org.eclipse.jdt.core.formatter.align_assignment_statements_on_columns" value="false"/>
 <setting id="org.eclipse.jdt.core.formatter.align_fields_grouping_blank_lines" value="99"/>
@@ -107,7 +107,7 @@
 <setting id="org.eclipse.jdt.core.formatter.comment.insert_new_line_between_different_tags" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.comment.insert_new_line_for_parameter" value="do not insert"/>
 <setting id="org.eclipse.jdt.core.formatter.comment.javadoc_do_not_separate_block_tags" value="false"/>
-<setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="140"/>
+<setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="180"/>
 <setting id="org.eclipse.jdt.core.formatter.comment.new_lines_at_block_boundaries" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.comment.new_lines_at_javadoc_boundaries" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.comment.preserve_white_space_between_code_and_line_comments" value="false"/>
