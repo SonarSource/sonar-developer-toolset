@@ -199,6 +199,8 @@ We use a tool called **Prettier**. In order to ensure it functions correctly, in
 Once installed set the files as such:
 ![Intellij javascript prettier](intellij/intellij-javascript-prettier.png)
 
+The Prettier plugin requires IntelliJ ultimate, but it's possible to use it without the plugin, e.g. [here](https://github.com/SonarSource/sonar-developer-toolset/pull/32#issuecomment-1514574604).
+
 Then to make sure prettier is run correctly, modify the on save actions:
 ![Intellij javascript onsave](intellij/intellij-javscript-actionsonsave.png)
 
