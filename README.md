@@ -98,9 +98,6 @@ up at every "save" action. The "additional actions" displayed should be configur
 
 ![Eclipse Auto Save](eclipse/eclipse-Java-save-action.png)
 
-[junit-templates.xml](/eclipse/junit-templates.xml) (optional):
-defines shortcuts "temp" and "thrown" in the unit tests. To be imported in Window > Preferences > Java > Editor > Template.
-
 ### Additional Configuration
 
 In Window > Preferences > Maven > Errors/Warnings, set "Plugin execution not covered by lifecycle execution" to "Ignore". This will silence out error messages when importing your Maven projects
