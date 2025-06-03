@@ -206,7 +206,7 @@ Go to `Preferences/Settings > Editor > Code Style > Scala > Imports` and update:
 * Ensure `Merge imports with the same prefix into one statement` is checked
 * Ensure to have the following `Import Layout` (it should be the default):
 
-![Intellij scala import layout](intellij/intellij-scala-import-layout.png)
+![Intellij scala import layout](intellij/intellij-scala-import-layout.PNG)
 
 ## (Optional) Build Configuration for Intellij
 
