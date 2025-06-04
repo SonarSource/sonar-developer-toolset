@@ -1,0 +1,11 @@
+---
+description: Tested with Claude-4-Sonnet : Original location : https://github.com/SonarSource/sonar-developer-toolset/cursor
+globs: *.py
+alwaysApply: false
+---
+
+# Python Constraints
+
+## Project Commands
+- **Unit tests:** `poetry run pytest`
+- **Code formatting:** `poetry run ruff check . --fix`

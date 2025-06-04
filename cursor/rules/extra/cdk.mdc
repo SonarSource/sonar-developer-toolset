@@ -1,0 +1,13 @@
+---
+description: Tested with Claude-4-Sonnet : Original location : https://github.com/SonarSource/sonar-developer-toolset/cursor
+globs: *.py
+alwaysApply: false
+---
+
+# Python Constraints
+
+## CDK Implementation
+- **Use "sc_cdk" library** when available (takes precedence over aws-cdk-lib)
+- **Lambda:** Python implementation on ARM64 architecture
+- **API:** API Gateway with AWS_IAM authentication
+- After changing .py files in cdk.json folders: run `make generate-snapshots`
