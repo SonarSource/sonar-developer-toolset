@@ -1,0 +1,1008 @@
+---
+description: Python Sonar Blocker Rules
+globs: *.py
+alwaysApply: false
+---
+
+# Python Sonar Blocker Rules
+
+This document outlines critical Python rules that are marked as blockers in SonarQube. These rules must be followed to prevent serious issues that could lead to application crashes, memory leaks, security vulnerabilities, or data corruption.
+
+## 1. Security (OWASP Top 10)
+
+### 1.1 Command Injection Prevention (RSPEC-5631)
+
+User input must not be used directly in system commands as it can lead to command injection attacks.
+
+```python
+# Noncompliant
+import os
+def execute_command(user_input):
+    os.system(f"ls {user_input}")  # Dangerous - allows command injection
+
+# Compliant
+import shlex
+import subprocess
+def execute_command(user_input):
+    safe_command = shlex.quote(user_input)
+    subprocess.run(["ls", safe_command], check=True)
+```
+
+### 1.2 SQL Injection Prevention (RSPEC-5607)
+
+User input must not be used directly in SQL queries as it can lead to SQL injection attacks.
+
+```python
+# Noncompliant
+def get_user(username):
+    cursor.execute(f"SELECT * FROM users WHERE username = '{username}'")  # Dangerous
+
+# Compliant
+def get_user(username):
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+```
+
+### 1.3 LDAP Injection Prevention (RSPEC-5654)
+
+User input must not be used directly in LDAP queries as it can lead to LDAP injection attacks.
+
+```python
+# Noncompliant
+import ldap
+def search_users(user_input):
+    search_filter = f"(uid={user_input})"  # Dangerous
+    conn.search_s("dc=example,dc=com", ldap.SCOPE_SUBTREE, search_filter)
+
+# Compliant
+import ldap
+def search_users(user_input):
+    safe_input = ldap.filter.escape_filter_chars(user_input)
+    search_filter = f"(uid={safe_input})"
+    conn.search_s("dc=example,dc=com", ldap.SCOPE_SUBTREE, search_filter)
+```
+
+### 1.4 XML External Entity Prevention (RSPEC-5719)
+
+XML parsing must be configured to prevent XXE (XML External Entity) attacks.
+
+```python
+# Noncompliant
+from xml.dom.minidom import parse
+doc = parse(user_input)  # Dangerous - vulnerable to XXE
+
+# Compliant
+from defusedxml.minidom import parse
+doc = parse(user_input)  # Safe - uses defusedxml
+```
+
+### 1.5 Unsafe Deserialization (RSPEC-5953, RSPEC-5905)
+
+Never use pickle or other unsafe deserialization methods with untrusted data.
+
+```python
+# Noncompliant
+import pickle
+def load_data(user_data):
+    return pickle.loads(user_data)  # Dangerous - arbitrary code execution
+
+# Compliant
+import json
+def load_data(user_data):
+    return json.loads(user_data)  # Safe - only deserializes data structures
+```
+
+### 1.6 Path Traversal Prevention (RSPEC-5651)
+
+User input must not be used directly in file paths to prevent path traversal attacks.
+
+```python
+# Noncompliant
+def read_file(filename):
+    with open(f"data/{filename}", "r") as f:  # Dangerous
+        return f.read()
+
+# Compliant
+from pathlib import Path
+def read_file(filename):
+    safe_path = Path("data").resolve()
+    file_path = (safe_path / filename).resolve()
+    if safe_path in file_path.parents:  # Ensure file is under safe_path
+        with open(file_path, "r") as f:
+            return f.read()
+    raise ValueError("Invalid path")
+```
+
+### 1.7 HTTP Response Splitting Prevention (RSPEC-5633)
+
+HTTP headers must be properly sanitized to prevent response splitting attacks.
+
+```python
+# Noncompliant
+def set_header(response, user_input):
+    response.headers["X-Custom-Header"] = user_input  # Dangerous
+
+# Compliant
+def set_header(response, user_input):
+    sanitized = "".join(c for c in user_input if c not in "\r\n")
+    response.headers["X-Custom-Header"] = sanitized
+```
+
+### 1.8 Open Redirect Prevention (RSPEC-5650)
+
+URLs for redirects must be validated to prevent open redirect vulnerabilities.
+
+```python
+# Noncompliant
+from flask import redirect
+def redirect_user(url):
+    return redirect(url)  # Dangerous - allows any URL
+
+# Compliant
+from flask import redirect
+from urllib.parse import urlparse
+def redirect_user(url):
+    parsed = urlparse(url)
+    if parsed.netloc == "trusted-domain.com":  # Validate domain
+        return redirect(url)
+    return redirect("/default")
+```
+
+### 1.9 Weak Cryptography Prevention (RSPEC-5714)
+
+Avoid using weak cryptographic algorithms or modes.
+
+```python
+# Noncompliant
+from Crypto.Cipher import AES
+cipher = AES.new(key, AES.MODE_ECB)  # Dangerous - ECB mode is weak
+
+# Compliant
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+iv = get_random_bytes(16)
+cipher = AES.new(key, AES.MODE_GCM, iv)  # Safe - GCM mode with IV
+```
+
+### 1.10 Insecure Protocol Usage (RSPEC-6779)
+
+Use secure protocols instead of insecure ones.
+
+```python
+# Noncompliant
+import http.client
+conn = http.client.HTTPConnection("example.com")  # Insecure
+
+# Compliant
+import http.client
+conn = http.client.HTTPSConnection("example.com")  # Secure
+```
+
+### 1.11 NoSQL Injection Prevention (RSPEC-5642)
+
+User input must not be used directly in NoSQL queries as it can lead to NoSQL injection attacks.
+
+```python
+# Noncompliant
+from pymongo import MongoClient
+def get_user(username):
+    query = {'username': username}  # Dangerous - user input used directly
+    return db.users.find_one(query)
+
+# Compliant
+from pymongo import MongoClient
+def get_user(username):
+    # Validate and sanitize input before using in query
+    if not isinstance(username, str):
+        raise ValueError("Username must be a string")
+    query = {'username': {'$eq': username}}  # Safe - using comparison operator
+    return db.users.find_one(query)
+```
+
+### 1.12 XPath Injection Prevention (RSPEC-5644)
+
+User input must not be used directly in XPath queries as it can lead to XPath injection attacks.
+
+```python
+# Noncompliant
+from lxml import etree
+def find_user(username):
+    xpath = f"//users/user[@name='{username}']"  # Dangerous
+    return doc.xpath(xpath)
+
+# Compliant
+from lxml import etree
+def find_user(username):
+    # Use parameterized XPath
+    xpath = "//users/user[@name=$name]"
+    return doc.xpath(xpath, name=username)
+```
+
+### 1.13 Cryptographic Key Generation (RSPEC-5828)
+
+Use secure methods for cryptographic key generation.
+
+```python
+# Noncompliant
+import random
+key = random.randbytes(16)  # Weak random number generator
+
+# Compliant
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives import hashes
+import os
+
+salt = os.urandom(16)
+kdf = PBKDF2HMAC(
+    algorithm=hashes.SHA256(),
+    length=32,
+    salt=salt,
+    iterations=100000,
+)
+key = kdf.derive(b"password")
+```
+
+### 1.14 Regular Expression DoS Prevention (RSPEC-5439)
+
+Avoid regular expressions that can lead to catastrophic backtracking.
+
+```python
+# Noncompliant
+import re
+pattern = re.compile(r"(a+)+$")  # Can cause ReDoS
+text = "a" * 100000 + "b"
+pattern.match(text)  # Will hang
+
+# Compliant
+import re
+pattern = re.compile(r"a+$")  # Safe pattern
+text = "a" * 100000 + "b"
+pattern.match(text)  # Returns quickly
+```
+
+### 1.15 Weak SSL/TLS Configuration (RSPEC-5724)
+
+Use secure SSL/TLS configurations and avoid weak protocols.
+
+```python
+# Noncompliant
+import ssl
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)  # Weak protocol version
+
+# Compliant
+import ssl
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+context.minimum_version = ssl.TLSVersion.TLSv1_2
+context.verify_mode = ssl.CERT_REQUIRED
+context.check_hostname = True
+```
+
+### 1.16 Unsafe YAML Loading (RSPEC-5755)
+
+Never use unsafe YAML loading with untrusted data.
+
+```python
+# Noncompliant
+import yaml
+data = yaml.load(untrusted_yaml)  # Dangerous - can execute arbitrary code
+
+# Compliant
+import yaml
+data = yaml.safe_load(untrusted_yaml)  # Safe - only loads basic YAML types
+```
+
+### 1.17 Database Password Security (RSPEC-2115)
+
+Empty or weak passwords should not be used for database connections as they introduce security vulnerabilities.
+
+```python
+# Noncompliant
+import mysql.connector
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password=""  # Empty password is dangerous
+)
+
+# Noncompliant
+from flask_sqlalchemy import SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/db'  # Empty password
+
+# Compliant
+import os
+import mysql.connector
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password=os.environ.get('DB_PASSWORD')  # Use environment variable
+)
+
+# Compliant
+from flask_sqlalchemy import SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://root:{os.environ["DB_PASSWORD"]}@localhost/db'
+
+# Compliant - Django settings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mydb',
+        'USER': 'myuser',
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': 'localhost',
+    }
+}
+```
+
+Note: Never hardcode database passwords in source code. Always use environment variables or a secure configuration management system.
+
+### 1.18 Cross-site Scripting Prevention (RSPEC-5131)
+
+Web applications must protect against reflected cross-site scripting (XSS) attacks by properly escaping user input.
+
+```python
+# Noncompliant
+from flask import Flask, request
+app = Flask(__name__)
+
+@app.route('/hello')
+def hello():
+    name = request.args.get('name')
+    return f'<h1>Hello {name}</h1>'  # Dangerous: unescaped user input
+
+# Compliant
+from flask import Flask, request, escape
+app = Flask(__name__)
+
+@app.route('/hello')
+def hello():
+    name = request.args.get('name')
+    return f'<h1>Hello {escape(name)}</h1>'  # Safe: escaped user input
+
+# Compliant - Using template engine
+from flask import Flask, request, render_template_string
+app = Flask(__name__)
+
+@app.route('/hello')
+def hello():
+    name = request.args.get('name')
+    template = '<!DOCTYPE html><html><body><h1>Hello {{ name }}</h1></body></html>'
+    return render_template_string(template, name=name)  # Safe: automatic escaping
+```
+
+### 1.19 Security Controls (RSPEC-6437)
+
+Security-critical operations must have proper controls and validations.
+
+```python
+# Noncompliant
+def change_password(user_id, new_password):
+    user = get_user(user_id)
+    user.password = new_password  # No password strength validation
+    user.save()
+
+# Compliant
+import re
+def change_password(user_id, new_password):
+    if not is_strong_password(new_password):
+        raise ValueError("Password does not meet security requirements")
+    user = get_user(user_id)
+    user.password = hash_password(new_password)
+    user.save()
+
+def is_strong_password(password):
+    return (len(password) >= 12 and
+            re.search(r"[A-Z]", password) and
+            re.search(r"[a-z]", password) and
+            re.search(r"[0-9]", password) and
+            re.search(r"[!@#$%^&*(),.?\":{}|<>]", password))
+```
+
+### 1.20 Security-Sensitive Code (RSPEC-6384)
+
+Security-sensitive code must be properly protected and isolated.
+
+```python
+# Noncompliant
+def process_payment(amount, card_number):
+    # Sensitive financial data processing in regular function
+    print(f"Processing payment with card {card_number}")  # Logging sensitive data
+    return process_transaction(amount, card_number)
+
+# Compliant
+import logging
+from typing import NewType
+
+# Create custom types for sensitive data
+CreditCard = NewType('CreditCard', str)
+
+def process_payment(amount: float, card_number: CreditCard) -> bool:
+    # Mask sensitive data in logs
+    masked_card = f"****{card_number[-4:]}"
+    logging.info(f"Processing payment with card {masked_card}")
+
+    try:
+        return process_transaction(amount, card_number)
+    finally:
+        # Clear sensitive data
+        del card_number
+```
+
+### 1.21 Security Hardening (RSPEC-6096)
+
+Applications must implement proper security hardening measures.
+
+```python
+# Noncompliant
+import ssl
+import requests
+
+def make_request():
+    # Weak security settings
+    requests.get('https://api.example.com', verify=False)
+
+# Compliant
+import ssl
+import requests
+from urllib3.util import ssl_
+import certifi
+
+def make_request():
+    # Strong TLS configuration
+    ssl_context = ssl_.create_urllib3_context(
+        cert_reqs=ssl.CERT_REQUIRED,
+        options=ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3 | ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1
+    )
+
+    # Use system CA certificates
+    response = requests.get(
+        'https://api.example.com',
+        verify=certifi.where(),
+        timeout=30
+    )
+```
+
+### 1.22 Security Configuration (RSPEC-5334)
+
+Security-related configuration must be properly set and validated.
+
+```python
+# Noncompliant
+# settings.py
+SECRET_KEY = 'hardcoded-secret-key'  # Hardcoded secret
+DEBUG = True  # Debug enabled in production
+ALLOWED_HOSTS = ['*']  # Allow all hosts
+SESSION_COOKIE_SECURE = False  # Insecure cookies
+
+# Compliant
+# settings.py
+import secrets
+from typing import List
+from django.core.exceptions import ImproperlyConfigured
+
+def get_env_value(var_name: str) -> str:
+    value = os.environ.get(var_name)
+    if value is None:
+        raise ImproperlyConfigured(f'{var_name} environment variable is not set')
+    return value
+
+SECRET_KEY = get_env_value('DJANGO_SECRET_KEY')
+DEBUG = False  # Disabled in production
+ALLOWED_HOSTS: List[str] = get_env_value('ALLOWED_HOSTS').split(',')
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+```
+
+## 2. Language Features and Syntax
+
+### 2.1 Mutable Default Parameters (RSPEC-5807)
+
+Never use mutable objects as default parameter values.
+
+```python
+# Noncompliant
+def process_items(items=[]):  # Dangerous - list is mutable
+    items.append(1)
+    return items
+
+# Compliant
+def process_items(items=None):
+    if items is None:
+        items = []
+    items.append(1)
+    return items
+```
+
+### 2.2 Expression Complexity (RSPEC-5549)
+
+Avoid overly complex expressions that are hard to understand.
+
+```python
+# Noncompliant
+result = a and b or c and d or e and f  # Hard to understand
+
+# Compliant
+def evaluate_condition():
+    if a and b:
+        return True
+    if c and d:
+        return True
+    return e and f
+result = evaluate_condition()
+```
+
+### 2.3 Infinite Recursion Prevention (RSPEC-930)
+
+Ensure recursive functions have proper termination conditions.
+
+```python
+# Noncompliant
+def factorial(n):
+    return n * factorial(n-1)  # No termination condition
+
+# Compliant
+def factorial(n):
+    if n <= 1:  # Proper termination condition
+        return 1
+    return n * factorial(n-1)
+```
+
+### 2.4 Unbound Variables (RSPEC-2854)
+
+Prevent use of variables before they are bound to values.
+
+```python
+# Noncompliant
+def process():
+    print(x)  # x is not defined
+    x = 1
+
+# Compliant
+def process():
+    x = 1
+    print(x)  # x is properly defined before use
+```
+
+## 3. Exception Handling
+
+### 3.1 Exception in Finally (RSPEC-2711)
+
+Don't raise exceptions in finally blocks as they mask original exceptions.
+
+```python
+# Noncompliant
+try:
+    do_something()
+finally:
+    raise Exception("cleanup failed")  # Masks original exception
+
+# Compliant
+def cleanup():
+    if not cleanup_successful():
+        logger.error("Cleanup failed")
+
+try:
+    do_something()
+finally:
+    cleanup()  # Log error instead of raising
+```
+
+### 3.2 Thread Exception Handling (RSPEC-935)
+
+Properly handle exceptions in threads to prevent silent failures.
+
+```python
+# Noncompliant
+import threading
+def worker():
+    raise Exception("Error")  # Exception is lost
+thread = threading.Thread(target=worker)
+thread.start()
+
+# Compliant
+import threading
+import queue
+import sys
+
+def worker(error_queue):
+    try:
+        raise Exception("Error")
+    except Exception as e:
+        error_queue.put(e)
+
+error_queue = queue.Queue()
+thread = threading.Thread(target=worker, args=(error_queue,))
+thread.start()
+thread.join()
+
+if not error_queue.empty():
+    raise error_queue.get()
+```
+
+## 4. Context Managers
+
+### 4.1 Context Manager Protocol (RSPEC-5722)
+
+Context managers must properly implement both `__enter__` and `__exit__` methods.
+
+```python
+# Noncompliant
+class MyContext:
+    def __enter__(self):
+        return self
+    # Missing __exit__ method
+
+# Compliant
+class MyContext:
+    def __enter__(self):
+        return self
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            # Handle exception
+            return False  # Re-raise exception
+        return True  # No exception
+```
+
+### 4.2 Context Manager Exit Method (RSPEC-2733)
+
+The `__exit__` method must accept the correct parameters.
+
+```python
+# Noncompliant
+class MyContext:
+    def __exit__(self, exc_type, exc_val):  # Missing exc_tb
+        pass
+
+# Compliant
+class MyContext:
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+```
+
+## 5. Object-Oriented Programming
+
+### 5.1 Class Method First Argument (RSPEC-2709)
+
+Class methods must have 'cls' as their first parameter.
+
+```python
+# Noncompliant
+class MyClass:
+    @classmethod
+    def my_method(self):  # Should be 'cls'
+        pass
+
+# Compliant
+class MyClass:
+    @classmethod
+    def my_method(cls):
+        pass
+```
+
+### 5.2 Return in __init__ (RSPEC-2317)
+
+The `__init__` method should not return a value.
+
+```python
+# Noncompliant
+class MyClass:
+    def __init__(self):
+        return 42  # Should not return a value
+
+# Compliant
+class MyClass:
+    def __init__(self):
+        self.value = 42  # Set attribute instead
+```
+
+### 5.3 Mutable Class Attributes (RSPEC-2876)
+
+Avoid mutable class attributes as they are shared between instances.
+
+```python
+# Noncompliant
+class MyClass:
+    items = []  # Shared between all instances
+    def add_item(self, item):
+        self.items.append(item)
+
+# Compliant
+class MyClass:
+    def __init__(self):
+        self.items = []  # Instance attribute
+    def add_item(self, item):
+        self.items.append(item)
+```
+
+## 6. Concurrency and Async
+
+### 6.1 Awaitable Objects (RSPEC-5756)
+
+Only await on awaitable objects (coroutines, tasks, or futures).
+
+```python
+# Noncompliant
+async def wrong():
+    await 42  # Not awaitable
+
+# Compliant
+async def correct():
+    await asyncio.sleep(1)  # Proper awaitable
+```
+
+### 6.2 Generator Return Values (RSPEC-2712)
+
+Generators must not return values in Python versions before 3.3.
+
+```python
+# Noncompliant (Python < 3.3)
+def generator():
+    yield 1
+    return 42  # Not allowed before Python 3.3
+
+# Compliant
+def generator():
+    yield 1
+    yield 42
+```
+
+## 7. Data Structures and Types
+
+### 7.1 Type Comparison (RSPEC-3403)
+
+Use isinstance() for type checking instead of type().
+
+```python
+# Noncompliant
+def process(value):
+    if type(value) == str:  # Brittle
+        return value.upper()
+
+# Compliant
+def process(value):
+    if isinstance(value, str):  # Supports inheritance
+        return value.upper()
+```
+
+### 7.2 Iterator Next Method (RSPEC-2823)
+
+Iterator classes must implement both __iter__ and __next__ methods.
+
+```python
+# Noncompliant
+class MyIterator:
+    def __iter__(self):
+        return self
+    # Missing __next__ method
+
+# Compliant
+class MyIterator:
+    def __init__(self):
+        self.index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index >= 10:
+            raise StopIteration
+        self.index += 1
+        return self.index
+```
+
+## 8. Framework-Specific Rules
+
+### 8.1 Django Debug Mode (RSPEC-2856)
+
+Debug mode must not be enabled in production environments.
+
+```python
+# Noncompliant
+# settings.py
+DEBUG = True  # Dangerous in production
+
+# Compliant
+# settings.py
+import os
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').lower() == 'true'
+```
+
+## 9. Object Lifecycle
+
+### 9.1 Exit in __init__ (RSPEC-2316)
+
+The `__init__` method should not call `sys.exit()` or similar functions.
+
+```python
+# Noncompliant
+class MyClass:
+    def __init__(self):
+        if not check_condition():
+            sys.exit(1)  # Don't exit in constructor
+
+# Compliant
+class MyClass:
+    def __init__(self):
+        if not check_condition():
+            raise ValueError("Invalid condition")
+```
+
+### 9.2 Context Manager Enter Method (RSPEC-2734)
+
+The `__enter__` method must be properly implemented in context managers.
+
+```python
+# Noncompliant
+class MyContext:
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+    # Missing __enter__ method
+
+# Compliant
+class MyContext:
+    def __enter__(self):
+        return self  # Properly implemented
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+```
+
+## 10. Common Mistakes
+
+### 10.1 Non-callable Called (RSPEC-2687)
+
+Ensure objects are callable before attempting to call them.
+
+```python
+# Noncompliant
+class MyClass:
+    pass
+
+obj = MyClass()
+result = obj()  # Error: obj is not callable
+
+# Compliant
+class MyClass:
+    def __call__(self):
+        return "I am callable"
+
+obj = MyClass()
+result = obj()  # Works correctly
+```
+
+### 10.2 Strip Without Assignment (RSPEC-2821)
+
+String strip operations must be assigned as they return new strings.
+
+```python
+# Noncompliant
+text = "  hello  "
+text.strip()  # Result is discarded
+print(text)  # Still has whitespace
+
+# Compliant
+text = "  hello  "
+text = text.strip()  # Result is assigned
+print(text)  # Whitespace is removed
+```
+
+### 10.3 Increment/Decrement Operator (RSPEC-2159)
+
+Python doesn't have increment/decrement operators (++ or --).
+
+```python
+# Noncompliant
+x = 1
+x++  # SyntaxError: invalid syntax
+
+# Compliant
+x = 1
+x += 1  # Use augmented assignment instead
+```
+
+## 11. Error Prevention
+
+### 11.1 Infinite Loop Prevention (RSPEC-2189)
+
+Loops must have a proper exit condition to prevent infinite execution.
+
+```python
+# Noncompliant
+def process_items(items):
+    i = 0
+    while i < len(items):
+        if items[i].is_special():
+            items.append(new_item())  # List grows, loop might never end
+        i += 1
+
+# Compliant
+def process_items(items):
+    original_length = len(items)
+    i = 0
+    while i < original_length:  # Only process original items
+        if items[i].is_special():
+            items.append(new_item())
+        i += 1
+```
+
+### 11.2 Exception Chain Preservation (RSPEC-3693)
+
+Exception chains must be preserved to maintain debugging information.
+
+```python
+# Noncompliant
+try:
+    do_something()
+except Exception as e:
+    raise CustomError("Operation failed")  # Original exception info is lost
+
+# Compliant
+try:
+    do_something()
+except Exception as e:
+    raise CustomError("Operation failed") from e  # Original exception is preserved
+```
+
+### 11.3 Resource Management (RSPEC-2695)
+
+Resources must be properly managed and released.
+
+```python
+# Noncompliant
+def read_file(path):
+    f = open(path)
+    data = f.read()  # File might not be closed if exception occurs
+    process_data(data)
+    f.close()
+
+# Compliant
+def read_file(path):
+    with open(path) as f:  # File will be closed automatically
+        data = f.read()
+        process_data(data)
+
+# Compliant - Multiple resources
+def process_data():
+    with open('input.txt') as input_file, \
+         open('output.txt', 'w') as output_file:
+        data = input_file.read()
+        output_file.write(process(data))
+```
+
+### 11.4 Security Misconfiguration (RSPEC-4647)
+
+Security-sensitive configurations must be properly set and validated.
+
+```python
+# Noncompliant
+import ssl
+context = ssl.create_default_context()
+context.check_hostname = False  # Disables hostname verification
+context.verify_mode = ssl.CERT_NONE  # Disables certificate verification
+
+# Compliant
+import ssl
+context = ssl.create_default_context()
+context.verify_mode = ssl.CERT_REQUIRED
+context.check_hostname = True
+
+# Noncompliant
+import json
+app.config.from_json('config.json')  # Loads config without validation
+
+# Compliant
+import json
+from schema import Schema, And, Use
+
+config_schema = Schema({
+    'DEBUG': bool,
+    'SECRET_KEY': And(str, len),
+    'DATABASE_URI': And(str, len),
+    'ALLOWED_HOSTS': [str]
+})
+
+with open('config.json') as f:
+    config = json.load(f)
+    validated_config = config_schema.validate(config)
+    app.config.update(validated_config)
+```

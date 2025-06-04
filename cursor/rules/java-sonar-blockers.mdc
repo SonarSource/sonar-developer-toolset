@@ -1,0 +1,813 @@
+---
+description: This document outlines critical Java rules that are marked as blockers in SonarQube.
+globs: *.java
+alwaysApply: false
+---
+
+- # Java Sonar Blocker Rules
+
+  This document outlines critical Java rules that are marked as blockers in SonarQube. These rules must be followed to prevent serious issues that could lead to application crashes, memory leaks, security vulnerabilities, or data corruption.
+
+- ## 1. Threading and Synchronization
+
+  - ### 1.1 Double-Checked Locking (RSPEC-2168)
+
+    Double-checked locking pattern should not be used as it is not thread-safe in Java.
+
+    ```java
+    // Noncompliant
+    class Singleton {
+        private static Helper helper;
+
+        public static Helper getHelper() {
+            if (helper == null) {
+                synchronized(Singleton.class) {
+                    if (helper == null) {
+                        helper = new Helper();  // Not thread-safe!
+                    }
+                }
+            }
+            return helper;
+        }
+    }
+
+    // Compliant
+    class Singleton {
+        private static final Helper helper = new Helper();  // Initialization is thread-safe
+
+        public static Helper getHelper() {
+            return helper;
+        }
+    }
+    ```
+
+  - ### 1.2 Thread Starting in Constructors (RSPEC-2693)
+
+    Threads should not be started in constructors as this can lead to race conditions and memory leaks.
+
+    ```java
+    // Noncompliant
+    public class BackgroundTask {
+        public BackgroundTask() {
+            Thread thread = new Thread(() -> {
+                // do something
+            });
+            thread.start();  // Don't start threads in constructor
+        }
+    }
+
+    // Compliant
+    public class BackgroundTask {
+        private final Thread thread;
+
+        public BackgroundTask() {
+            thread = new Thread(() -> {
+                // do something
+            });
+        }
+
+        public void start() {
+            thread.start();  // Start thread after construction
+        }
+    }
+    ```
+
+  - ### 1.3 Thread Wait and Notify (RSPEC-2236)
+
+    Methods wait(), notify() and notifyAll() should not be called on Thread instances.
+
+    ```java
+    // Noncompliant
+    Thread thread = new Thread();
+    thread.wait();  // Wrong: wait() called on Thread instance
+    thread.notify();  // Wrong: notify() called on Thread instance
+
+    // Compliant
+    synchronized(lock) {
+        lock.wait();  // Correct: wait() called on lock object
+        lock.notify();  // Correct: notify() called on lock object
+    }
+    ```
+
+  - ### 1.4 ThreadGroup Usage (RSPEC-3014)
+
+    ThreadGroup should not be used as it is not thread-safe and has design flaws.
+
+    ```java
+    // Noncompliant
+    ThreadGroup group = new ThreadGroup("myGroup");
+    Thread thread = new Thread(group, runnable);
+
+    // Compliant
+    ExecutorService executor = Executors.newFixedThreadPool(10);
+    executor.submit(runnable);
+    ```
+
+  - ### 1.5 Thread Sleep with Lock (RSPEC-2276)
+
+    Thread.sleep() should not be used when a lock is held. Use wait() instead.
+
+    ```java
+    // Noncompliant
+    synchronized (lock) {
+        Thread.sleep(1000);  // Holds lock while sleeping
+    }
+
+    // Compliant
+    synchronized (lock) {
+        lock.wait(1000);  // Releases lock while waiting
+    }
+    ```
+
+- ## 2. Resource Management
+
+  - ### 2.1 SWT Resources (RSPEC-2144)
+
+    SWT Resources must be properly disposed to prevent resource leaks. The Java garbage collector cannot be relied upon to clean up these resources.
+
+    ```java
+    // Noncompliant
+    public class MyView {
+        private Image image = new Image(display, "path/to/image");
+        // No dispose method
+    }
+
+    // Compliant
+    public class MyView {
+        private Image image = new Image(display, "path/to/image");
+
+        public void dispose() {
+            if (image != null && !image.isDisposed()) {
+                image.dispose();
+            }
+        }
+    }
+    ```
+
+  - ### 2.2 Static SWT Images (RSPEC-2150)
+
+    Static SWT Images should not hold file handles as they can cause resource leaks.
+
+    ```java
+    // Noncompliant
+    public class ImageHolder {
+        private static final Image LOGO = new Image(display, "logo.png");  // Holds file handle indefinitely
+    }
+
+    // Compliant
+    public class ImageHolder {
+        private static Image getLogo() {
+            return new Image(display, "logo.png");  // Create when needed
+        }
+    }
+    ```
+
+  - ### 2.3 Custom Resources (RSPEC-3546)
+
+    Custom resources that implement AutoCloseable should be properly closed.
+
+    ```java
+    // Noncompliant
+    CustomResource resource = new CustomResource();
+    resource.process();  // Resource not closed
+
+    // Compliant
+    try (CustomResource resource = new CustomResource()) {
+        resource.process();
+    }  // Resource automatically closed
+    ```
+
+  - ### 2.4 BLOB and CLOB Resources (RSPEC-2792)
+
+    The free() method should be called on BLOB and CLOB objects to release database resources.
+
+    ```java
+    // Noncompliant
+    Blob blob = resultSet.getBlob("DATA");
+    // ... use blob ...
+    // blob.free() not called
+
+    // Compliant
+    Blob blob = null;
+    try {
+        blob = resultSet.getBlob("DATA");
+        // ... use blob ...
+    } finally {
+        if (blob != null) {
+            blob.free();
+        }
+    }
+    ```
+
+- ## 3. Spring Framework
+
+  - ### 3.1 Session Attributes (RSPEC-3753)
+
+    @Controller classes using @SessionAttributes must call setComplete on their SessionStatus objects.
+
+    ```java
+    // Noncompliant
+    @Controller
+    @SessionAttributes("user")
+    public class UserController {
+        @RequestMapping("/save")
+        public String save(@ModelAttribute User user) {
+            // Session attributes not cleared
+            return "success";
+        }
+    }
+
+    // Compliant
+    @Controller
+    @SessionAttributes("user")
+    public class UserController {
+        @RequestMapping("/save")
+        public String save(@ModelAttribute User user, SessionStatus status) {
+            // ... save user ...
+            status.setComplete();  // Clear session attributes
+            return "success";
+        }
+    }
+    ```
+
+  - ### 3.2 Transactional Methods (RSPEC-2229)
+
+    Methods should not call same-class methods with incompatible @Transactional values.
+
+    ```java
+    // Noncompliant
+    @Service
+    public class UserService {
+        @Transactional(readOnly = true)
+        public User getUser(long id) {
+            return findUser(id);  // Calls method with different transaction settings
+        }
+
+        @Transactional
+        private User findUser(long id) {
+            // ...
+        }
+    }
+
+    // Compliant
+    @Service
+    public class UserService {
+        @Transactional(readOnly = true)
+        public User getUser(long id) {
+            return userRepository.findById(id);  // Calls method with compatible settings
+        }
+    }
+    ```
+
+  - ### 3.3 Component Scanning (RSPEC-4602)
+
+    @SpringBootApplication and @ComponentScan should not be used in the default package.
+
+    ```java
+    // Noncompliant
+    @SpringBootApplication  // Class in default package
+    public class Application {
+        // ...
+    }
+
+    // Compliant
+    package com.example;
+
+    @SpringBootApplication  // Class in proper package
+    public class Application {
+        // ...
+    }
+    ```
+
+- ## 4. Testing
+
+  - ### 4.1 Mockito Initialization (RSPEC-5979)
+
+    Annotated Mockito objects should be properly initialized.
+
+    ```java
+    // Noncompliant
+    public class MyTest {
+        @Mock
+        private MyService service;  // Not initialized
+
+        @Test
+        public void test() {
+            service.doSomething();  // NullPointerException
+        }
+    }
+
+    // Compliant
+    @RunWith(MockitoJUnitRunner.class)  // Initializes mocks
+    public class MyTest {
+        @Mock
+        private MyService service;
+
+        @Test
+        public void test() {
+            service.doSomething();  // Works correctly
+        }
+    }
+    ```
+
+  - ### 4.2 JUnit Super Methods (RSPEC-2188)
+
+    JUnit test cases should call super methods to ensure proper test lifecycle.
+
+    ```java
+    // Noncompliant
+    public class MyTest extends TestCase {
+        @Override
+        protected void setUp() {
+            // setup code without super.setUp()
+        }
+    }
+
+    // Compliant
+    public class MyTest extends TestCase {
+        @Override
+        protected void setUp() {
+            super.setUp();  // Call super first
+            // setup code
+        }
+    }
+    ```
+
+- ## 5. Code Organization
+
+  - ### 5.1 Future Keywords (RSPEC-1190)
+
+    Future keywords should not be used as names to maintain compatibility with future Java versions.
+
+    ```java
+    // Noncompliant
+    int record = 42;  // 'record' is a keyword in Java 16+
+    void module() {}  // 'module' is a keyword in Java 9+
+
+    // Compliant
+    int recordValue = 42;
+    void moduleHandler() {}
+    ```
+
+  - ### 5.2 Main Method Signature (RSPEC-3051)
+
+    The main method must have the correct signature to be recognized as the program entry point.
+
+    ```java
+    // Noncompliant
+    public static void main() {}  // Wrong signature
+    public static void main(String args) {}  // Wrong signature
+    public static void main(String[] args, int extra) {}  // Wrong signature
+
+    // Compliant
+    public static void main(String[] args) {}  // Correct signature
+    ```
+
+  - ### 5.3 Clone Method Override (RSPEC-2975)
+
+    The clone() method should not be overridden. Use copy constructors or factories instead.
+
+    ```java
+    // Noncompliant
+    class Entity implements Cloneable {
+        private List<Entity> children;
+
+        @Override
+        public Entity clone() {
+            try {
+                Entity copy = (Entity) super.clone();  // Bypasses constructor
+                copy.children = children.stream().map(Entity::clone).toList();
+                return copy;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
+        }
+    }
+
+    // Compliant
+    class Entity {
+        private List<Entity> children;
+
+        public Entity(Entity template) {  // Copy constructor
+            this.children = template.children.stream()
+                .map(child -> new Entity(child))
+                .toList();
+        }
+    }
+    ```
+
+- ## 6. Persistence and Database
+
+  - ### 6.1 Transaction Type (RSPEC-3823)
+
+    RESOURCE_LOCAL transaction type should not be used. Use JTA instead.
+
+    ```java
+    // Noncompliant
+    @PersistenceUnit(unitName = "myUnit", type = "RESOURCE_LOCAL")
+    private EntityManagerFactory emf;
+
+    // Compliant
+    @PersistenceUnit(unitName = "myUnit", type = "JTA")
+    private EntityManagerFactory emf;
+    ```
+
+  - ### 6.2 Multiple Entity Associations (RSPEC-3356)
+
+    Tables should not be associated with multiple entities to prevent data inconsistency.
+
+    ```java
+    // Noncompliant
+    @Entity
+    @Table(name = "users")
+    public class User {
+        // ...
+    }
+
+    @Entity
+    @Table(name = "users")  // Same table used in multiple entities
+    public class Employee {
+        // ...
+    }
+
+    // Compliant
+    @Entity
+    @Table(name = "users")
+    public class User {
+        // ...
+    }
+
+    @Entity
+    @Table(name = "employees")  // Different table for different entity
+    public class Employee {
+        // ...
+    }
+    ```
+
+  - ### 6.3 Persistence Getters (RSPEC-2207)
+
+    Getters annotated for persistence should not contain business logic.
+
+    ```java
+    // Noncompliant
+    @Entity
+    public class User {
+        private String name;
+
+        @Column
+        public String getName() {
+            return name.toUpperCase();  // Business logic in getter
+        }
+    }
+
+    // Compliant
+    @Entity
+    public class User {
+        private String name;
+
+        @Column
+        public String getName() {
+            return name;  // Simple getter
+        }
+
+        public String getFormattedName() {
+            return name.toUpperCase();  // Business logic in separate method
+        }
+    }
+    ```
+
+- ## 7. String Formatting
+
+  - ### 7.1 Format String Symbols (RSPEC-2788)
+
+    Format strings should use the correct symbols to prevent formatting errors.
+
+    ```java
+    // Noncompliant
+    String.format("The value is %d", "123");  // String used with %d
+    String.format("Name: %s, Id: %d", id, name);  // Arguments in wrong order
+
+    // Compliant
+    String.format("The value is %s", "123");  // String used with %s
+    String.format("Name: %s, Id: %d", name, id);  // Arguments in correct order
+    ```
+
+- ## 8. Design Patterns
+
+  - ### 8.1 Singleton Implementation (RSPEC-2125)
+
+    Singletons should be implemented as enums to ensure thread safety and proper initialization.
+
+    ```java
+    // Noncompliant
+    public class Singleton {
+        private static Singleton instance;
+
+        private Singleton() {}
+
+        public static Singleton getInstance() {
+            if (instance == null) {
+                instance = new Singleton();
+            }
+            return instance;
+        }
+    }
+
+    // Compliant
+    public enum Singleton {
+        INSTANCE;
+
+        public void doSomething() {
+            // Singleton behavior
+        }
+    }
+    ```
+
+- ## 9. Security and Injection Prevention
+
+  - ### 9.1 Path Injection (RSPEC-2083)
+
+    File paths should be validated to prevent path injection attacks.
+
+    ```java
+    // Noncompliant
+    public void getFile(String fileName) {
+        File file = new File(fileName);  // User input used directly in file path
+        file.getCanonicalFile();
+    }
+
+    // Compliant
+    public void getFile(String fileName) {
+        File file = new File(fileName);
+        if (!file.getCanonicalPath().startsWith("/safe/path/")) {  // Validate path
+            throw new SecurityException("Invalid path");
+        }
+    }
+    ```
+
+  - ### 9.2 Command Injection (RSPEC-2076)
+
+    OS commands should be protected against command injection.
+
+    ```java
+    // Noncompliant
+    Runtime.getRuntime().exec("cmd.exe /c dir " + userInput);
+
+    // Compliant
+    List<String> args = new ArrayList<>();
+    args.add("cmd.exe");
+    args.add("/c");
+    args.add("dir");
+    args.add(userInput);
+    Runtime.getRuntime().exec(args.toArray(new String[0]));
+    ```
+
+  - ### 9.3 LDAP Injection (RSPEC-2078)
+
+    LDAP queries should be protected against injection attacks.
+
+    ```java
+    // Noncompliant
+    String filter = "(&(objectClass=user)(uid=" + username + "))";
+    ctx.search("dc=example,dc=com", filter, controls);
+
+    // Compliant
+    String filter = "(&(objectClass=user)(uid={0}))";
+    ctx.search("dc=example,dc=com", filter, new Object[]{username}, controls);
+    ```
+
+  - ### 9.4 XPath Injection (RSPEC-2091)
+
+    XPath expressions should be protected against injection attacks.
+
+    ```java
+    // Noncompliant
+    String xpath = "//user[@name='" + username + "']";
+    Document doc = builder.parse(file);
+    XPath xPath = XPathFactory.newInstance().newXPath();
+    NodeList nodes = (NodeList) xPath.evaluate(xpath, doc, XPathConstants.NODESET);
+
+    // Compliant
+    XPath xPath = XPathFactory.newInstance().newXPath();
+    String xpath = "//user[@name=$name]";
+    XPathExpression expr = xPath.compile(xpath);
+    SimpleBindings bindings = new SimpleBindings();
+    bindings.put("name", username);
+    NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+    ```
+
+  - ### 9.5 XSS Prevention (RSPEC-5131)
+
+    Endpoints should be protected against reflected cross-site scripting (XSS) attacks.
+
+    ```java
+    // Noncompliant
+    @GetMapping("/user")
+    public String getUser(@RequestParam String name) {
+        return "<div>Hello " + name + "</div>";  // Direct user input in HTML
+    }
+
+    // Compliant
+    @GetMapping("/user")
+    public String getUser(@RequestParam String name) {
+        return "<div>Hello " + HtmlUtils.htmlEscape(name) + "</div>";
+    }
+    ```
+
+  - ### 9.6 Hard-coded Credentials (RSPEC-6437)
+
+    Credentials should not be hard-coded in source code.
+
+    ```java
+    // Noncompliant
+    String password = "mySecretPassword123";
+    String url = "jdbc:mysql://localhost/db?password=secret";
+
+    // Compliant
+    String password = System.getenv("DB_PASSWORD");
+    String url = "jdbc:mysql://localhost/db?password=" + getPasswordFromSecureStore();
+    ```
+
+- ## 10. Resource and Memory Management
+
+  - ### 10.1 ObjectOutputStream Usage (RSPEC-2689)
+
+    Files opened in append mode should not be used with ObjectOutputStream.
+
+    ```java
+    // Noncompliant
+    FileOutputStream fos = new FileOutputStream("data.bin", true);  // Append mode
+    ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+    // Compliant
+    FileOutputStream fos = new FileOutputStream("data.bin", false);  // Overwrite mode
+    ObjectOutputStream oos = new ObjectOutputStream(fos);
+    ```
+
+  - ### 10.2 Infinite Loops (RSPEC-2189)
+
+    Loops should not be infinite unless explicitly intended.
+
+    ```java
+    // Noncompliant
+    while (true) {
+        doSomething();
+    }
+
+    // Compliant
+    while (condition) {
+        doSomething();
+        if (stopCondition) {
+            break;
+        }
+    }
+    ```
+
+- ## 11. String and Format Handling
+
+  - ### 11.1 Printf Format Strings (RSPEC-2275)
+
+    Printf-style format strings should be used correctly to prevent runtime errors.
+
+    ```java
+    // Noncompliant
+    String.format("First %s, then %d", 42, "foo");  // Arguments in wrong order
+    String.format("Display %d", "foo");  // Wrong type
+
+    // Compliant
+    String.format("First %s, then %d", "foo", 42);
+    String.format("Display %d", 42);
+    ```
+
+  - ### 11.2 PreparedStatement Indices (RSPEC-2695)
+
+    PreparedStatement and ResultSet methods should use valid indices.
+
+    ```java
+    // Noncompliant
+    PreparedStatement ps = con.prepareStatement(query);
+    ps.setString(0, value);  // Invalid index, should start from 1
+    ResultSet rs = ps.executeQuery();
+    rs.getString(0);  // Invalid index
+
+    // Compliant
+    PreparedStatement ps = con.prepareStatement(query);
+    ps.setString(1, value);  // Valid index
+    ResultSet rs = ps.executeQuery();
+    rs.getString(1);  // Valid index
+    ```
+
+- ## 12. Testing and Assertions
+
+  - ### 12.1 Empty Test Cases (RSPEC-2187)
+
+    Test classes should contain test methods.
+
+    ```java
+    // Noncompliant
+    public class MyTest {
+        public void helperMethod() {
+            // Not a test method
+        }
+    }
+
+    // Compliant
+    public class MyTest {
+        @Test
+        public void testFeature() {
+            // Actual test
+            assertEquals(expected, actual);
+        }
+    }
+    ```
+
+  - ### 12.2 Complete Assertions (RSPEC-2970)
+
+    Assertions should be complete and meaningful.
+
+    ```java
+    // Noncompliant
+    assertEquals(user.getEmail());  // Missing expected value
+    assertTrue(list);  // Unclear assertion
+
+    // Compliant
+    assertEquals("user@example.com", user.getEmail());
+    assertTrue(list.isEmpty());  // Clear condition
+    ```
+
+- ## 13. Code Quality
+
+  - ### 13.1 License Headers (RSPEC-1451)
+
+    Source files should have proper copyright and license headers.
+
+    ```java
+    // Noncompliant
+    public class MyClass {  // Missing header
+        // ...
+    }
+
+    // Compliant
+    /*
+     * Copyright (c) 2024 Company Name
+     * Licensed under the Apache License, Version 2.0
+     */
+    public class MyClass {
+        // ...
+    }
+    ```
+
+  - ### 13.2 Main Method Throws (RSPEC-2096)
+
+    The main method should not throw exceptions.
+
+    ```java
+    // Noncompliant
+    public static void main(String[] args) throws Exception {
+        riskyOperation();
+    }
+
+    // Compliant
+    public static void main(String[] args) {
+        try {
+            riskyOperation();
+        } catch (Exception e) {
+            logger.error("Error in main", e);
+            System.exit(1);
+        }
+    }
+    ```
+
+  - ### 13.3 Method Returns (RSPEC-3516)
+
+    Methods should not have invariant returns.
+
+    ```java
+    // Noncompliant
+    int getNumber() {
+        if (condition) {
+            return 42;
+        } else {
+            return 42;  // Same value in all branches
+        }
+    }
+
+    // Compliant
+    int getNumber() {
+        return 42;  // Single return if value is constant
+    }
+    ```
+
+  - ### 13.4 Bit Operations (RSPEC-2437)
+
+    Unnecessary bit operations should be avoided.
+
+    ```java
+    // Noncompliant
+    int value = number & 0xFFFFFFFF;  // Unnecessary mask for int
+    int shifted = number << 0;  // No-op shift
+
+    // Compliant
+    int value = number;  // No mask needed
+    int shifted = number;  // No shift needed
+    ```

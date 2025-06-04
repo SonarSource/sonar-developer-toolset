@@ -1,0 +1,546 @@
+---
+description: This document outlines critical TypeScript rules that are marked as blockers in SonarQube.
+globs: *.ts?(x)
+alwaysApply: false
+---
+
+# TypeScript Sonar Blocker Rules
+
+This document outlines critical TypeScript rules that are marked as blockers in SonarQube.
+
+## 1. Security
+
+### 1.1 Angular Sanitization Bypass (RSPEC-6268)
+
+Angular's built-in sanitization should not be disabled unless absolutely necessary, as it can lead to XSS vulnerabilities.
+
+```typescript
+// Noncompliant
+@Component({
+  template: '<div [innerHTML]="hello"></div>'
+})
+export class HelloComponent {
+  constructor(private sanitizer: DomSanitizer) {
+    const name = getQueryParam('name');
+    const html = "<h1>Hello " + name + "</h1>";
+    this.hello = this.sanitizer.bypassSecurityTrustHtml(html);  // Dangerous: disables XSS protection
+  }
+}
+
+// Compliant
+@Component({
+  template: '<div><h1>Hello {{name}}</h1></div>'
+})
+export class HelloComponent {
+  constructor() {
+    this.name = getQueryParam('name');  // Angular's automatic sanitization is preserved
+  }
+}
+```
+
+### 1.2 Strict Comparison Required (RSPEC-3828)
+
+Always use strict equality operators (`===` and `!==`) instead of loose equality operators (`==` and `!=`).
+
+```typescript
+// Noncompliant
+if (x == null) {  // Will match both null and undefined
+  console.log('x is null or undefined');
+}
+
+// Compliant
+if (x === null) {  // Explicitly checks for null
+  console.log('x is null');
+}
+if (x === undefined) {  // Explicitly checks for undefined
+  console.log('x is undefined');
+}
+```
+
+### 1.3 Promise Executor Function (RSPEC-4343)
+
+The executor function of a Promise should not be an async function.
+
+```typescript
+// Noncompliant
+new Promise(async (resolve, reject) => {  // async is redundant and dangerous here
+  const result = await doSomething();
+  resolve(result);
+});
+
+// Compliant
+new Promise((resolve, reject) => {
+  doSomething().then(resolve).catch(reject);
+});
+```
+
+### 1.4 Array Constructor (RSPEC-2872)
+
+The Array constructor should not be used with a single numeric argument.
+
+```typescript
+// Noncompliant
+const arr1 = new Array(3);  // Creates array with 3 empty slots
+const arr2 = new Array('3');  // Creates array with string '3'
+
+// Compliant
+const arr1 = Array(3).fill(undefined);  // Creates array with 3 undefined elements
+const arr2 = ['3'];  // Creates array with string '3'
+```
+
+### 1.5 Debugger Statements (RSPEC-2817)
+
+Debugger statements should not be used in production code.
+
+```typescript
+// Noncompliant
+function processData(data: any) {
+  debugger;  // Will pause execution in development
+  return data.value;
+}
+
+// Compliant
+function processData(data: any) {
+  return data.value;
+}
+```
+
+### 1.6 Await Promise.all (RSPEC-4446)
+
+Promise.all() should be used when awaiting multiple promises instead of awaiting them individually.
+
+```typescript
+// Noncompliant
+async function processAll(items: string[]) {
+  const results = [];
+  for (const item of items) {
+    const result = await processItem(item);  // Sequential execution
+    results.push(result);
+  }
+  return results;
+}
+
+// Compliant
+async function processAll(items: string[]) {
+  const promises = items.map(item => processItem(item));
+  return Promise.all(promises);  // Parallel execution
+}
+```
+
+### 1.7 Proper Error Handling (RSPEC-3509)
+
+Promises should either be awaited or have a .catch() handler.
+
+```typescript
+// Noncompliant
+function processData() {
+  Promise.reject('error');  // Unhandled rejection
+  asyncOperation().then(result => console.log(result));  // No error handling
+}
+
+// Compliant
+async function processData() {
+  try {
+    await Promise.reject('error');
+  } catch (error) {
+    console.error(error);
+  }
+
+  asyncOperation()
+    .then(result => console.log(result))
+    .catch(error => console.error(error));
+}
+```
+
+### 1.8 Proper this Binding (RSPEC-2703)
+
+Methods using 'this' should be properly bound when used as callbacks.
+
+```typescript
+// Noncompliant
+class Counter {
+  count = 0;
+  increment() { this.count++; }
+  start() {
+    setInterval(this.increment, 1000);  // 'this' will be undefined
+  }
+}
+
+// Compliant
+class Counter {
+  count = 0;
+  increment = () => { this.count++; }  // Arrow function preserves 'this'
+  // or
+  start() {
+    setInterval(() => this.increment(), 1000);
+  }
+}
+```
+
+## 2. Code Structure
+
+### 2.1 Switch Statement Labels (RSPEC-1219)
+
+Switch statements should not contain non-case labels as they make the code confusing and error-prone.
+
+```typescript
+// Noncompliant - Missing 'case' keyword
+switch (day) {
+  case MONDAY:
+  case TUESDAY:
+  WEDNESDAY:   // Syntax error: missing 'case' keyword
+    doSomething();
+    break;
+}
+
+// Noncompliant - Label inside case
+switch (day) {
+  case MONDAY:
+    break;
+  case TUESDAY:
+    myLabel: for(let i = 0; i < 10; i++) {  // Label makes code hard to follow
+      break myLabel;
+    }
+    break;
+}
+
+// Compliant
+switch (day) {
+  case MONDAY:
+  case TUESDAY:
+  case WEDNESDAY:
+    doSomething();
+    break;
+}
+
+// Compliant - Extract complex logic to function
+switch (day) {
+  case MONDAY:
+    break;
+  case TUESDAY:
+    processLoop();  // Complex logic moved to separate function
+    break;
+}
+```
+
+## 3. Reliability
+
+### 3.1 Array Callback Return (RSPEC-3796)
+
+Array methods that take callback functions require the callback to return a value explicitly.
+
+```typescript
+// Noncompliant
+const numbers = [1, 2, 3];
+const doubled = numbers.map(num => {
+  num * 2;  // Missing return, will return undefined
+});
+
+const sum = numbers.reduce((acc, num) => {
+  acc + num;  // Missing return, will cause TypeError
+});
+
+// Compliant
+const doubled = numbers.map(num => {
+  return num * 2;
+});
+
+const sum = numbers.reduce((acc, num) => {
+  return acc + num;
+});
+```
+
+### 3.2 Array Constructor (RSPEC-1526)
+
+Array constructors should not be used to create arrays with mixed types or multiple arguments.
+
+```typescript
+// Noncompliant
+const arr1 = new Array(1, 2, "3");  // Mixed types
+const arr2 = new Array(someVariable);  // Length depends on runtime value
+
+// Compliant
+const arr1 = [1, 2, "3"];  // Array literal is clearer
+const arr2 = Array.from({ length: someVariable });  // Clear intent
+```
+
+### 3.3 XSS Prevention (RSPEC-3273)
+
+User input must not be used directly in HTML content without proper escaping.
+
+```typescript
+// Noncompliant
+function displayUser(name: string) {
+  element.innerHTML = `Welcome ${name}`;  // Potential XSS
+  element.innerHTML = userInput;  // Direct assignment of user input
+}
+
+// Compliant
+function displayUser(name: string) {
+  element.textContent = `Welcome ${name}`;  // Safe: automatically escaped
+  // Or if HTML is needed:
+  element.innerHTML = DOMPurify.sanitize(userInput);  // Properly sanitized
+}
+```
+
+### 3.4 Secure Cookie Usage (RSPEC-6299)
+
+Cookies containing sensitive data must have secure attributes.
+
+```typescript
+// Noncompliant
+document.cookie = "sessionId=12345";  // Missing security attributes
+document.cookie = "auth=token; Secure";  // Missing other security attributes
+
+// Compliant
+document.cookie = "sessionId=12345; Secure; HttpOnly; SameSite=Strict";
+document.cookie = "auth=token; Secure; HttpOnly; SameSite=Strict; Path=/";
+```
+
+### 3.5 Promise Chain Return (RSPEC-6109)
+
+Promise chains should have proper return values to ensure correct promise propagation.
+
+```typescript
+// Noncompliant
+function processData() {
+  return getData()
+    .then(data => {
+      transformData(data);  // Missing return, next then gets undefined
+    })
+    .then(transformed => {
+      useTransformed(transformed);  // transformed is undefined
+    });
+}
+
+// Compliant
+function processData() {
+  return getData()
+    .then(data => {
+      return transformData(data);  // Properly returns transformed data
+    })
+    .then(transformed => {
+      return useTransformed(transformed);  // Gets correct data
+    });
+}
+```
+
+### 3.6 Dynamic Code Execution (RSPEC-5334)
+
+Dynamic code execution with untrusted input can lead to code injection vulnerabilities.
+
+```typescript
+// Noncompliant
+function executeCode(userInput: string) {
+    eval(userInput);  // Direct execution of user input
+    new Function(userInput)();  // Dynamic function creation with user input
+    setTimeout(userInput, 1000);  // Executing string as code
+}
+
+// Noncompliant
+const mongoQuery = `db.users.find(${userInput})`;  // Dynamic MongoDB query
+const sqlQuery = `SELECT * FROM users WHERE ${conditions}`;  // Dynamic SQL query
+
+// Compliant
+function executeCode(userInput: string) {
+    // Use proper input validation and sanitization
+    const safeValue = validateAndSanitize(userInput);
+    // Use parameterized queries
+    db.users.find({ username: safeValue });
+    // Use prepared statements
+    connection.execute('SELECT * FROM users WHERE username = ?', [safeValue]);
+}
+
+// Compliant - If dynamic execution is absolutely necessary
+function executeSafeCode(code: string) {
+    // Strict validation of allowed operations
+    if (!isAllowedOperation(code)) {
+        throw new Error('Operation not allowed');
+    }
+    // Sandbox the execution
+    const sandbox = createSecureSandbox();
+    return sandbox.execute(code);
+}
+```
+
+## 4. Type System
+
+### 4.1 Recursive Type Inheritance (RSPEC-3464)
+
+Type definitions should not have recursive inheritance as it leads to infinite type expansion.
+
+```typescript
+// Noncompliant
+interface Animal extends Pet { }
+interface Pet extends Animal { }  // Recursive inheritance
+
+// Noncompliant
+type A = B;
+type B = C;
+type C = A;  // Circular type reference
+
+// Compliant
+interface Animal {
+    name: string;
+}
+interface Pet extends Animal {
+    owner: string;
+}
+
+// Compliant
+type Animal = {
+    name: string;
+}
+type Pet = Animal & {
+    owner: string;
+}
+```
+
+### 4.2 Missing Return Statement (RSPEC-1139)
+
+Functions with return type annotations must have explicit return statements in all code paths.
+
+```typescript
+// Noncompliant
+function getData(): string {
+    if (condition) {
+        return "data";
+    }
+    // Missing return in else path
+}
+
+// Noncompliant
+function processItem(): number {
+    try {
+        return computeValue();
+    } catch (e) {
+        logError(e);
+        // Missing return in catch block
+    }
+}
+
+// Compliant
+function getData(): string {
+    if (condition) {
+        return "data";
+    }
+    return "default";  // All paths return
+}
+
+// Compliant
+function processItem(): number {
+    try {
+        return computeValue();
+    } catch (e) {
+        logError(e);
+        return -1;  // Error case handled
+    }
+}
+```
+
+### 4.3 Recursive Type References (RSPEC-1590)
+
+Type aliases should not create recursive type references without proper indirection.
+
+```typescript
+// Noncompliant
+type Tree = {
+    value: string;
+    children: Tree[];  // Direct recursion
+};
+
+// Noncompliant
+type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
+type JsonObject = { [key: string]: JsonValue };
+type JsonArray = JsonValue[];  // Complex recursion
+
+// Compliant
+type Tree = {
+    value: string;
+    children: TreeNode[];
+};
+interface TreeNode {  // Interface provides proper indirection
+    value: string;
+    children: TreeNode[];
+}
+
+// Compliant
+type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
+```
+
+## 5. Security Configuration
+
+### 5.1 Security Settings (RSPEC-4647)
+
+Security-critical settings must be properly configured and validated.
+
+```typescript
+// Noncompliant
+const config = {
+    allowAllOrigins: true,  // Too permissive CORS
+    validateInput: false,   // Disabled input validation
+    enableSecurity: false   // Security features disabled
+};
+
+// Noncompliant
+app.use(cors());  // Default CORS configuration
+app.use(helmet({ contentSecurityPolicy: false }));  // Disabled CSP
+
+// Compliant
+const config = {
+    allowedOrigins: ['https://trusted-domain.com'],
+    validateInput: true,
+    enableSecurity: true,
+    securityHeaders: {
+        'Content-Security-Policy': "default-src 'self'",
+        'X-Frame-Options': 'DENY'
+    }
+};
+
+// Compliant
+app.use(cors({
+    origin: ['https://trusted-domain.com'],
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
+app.use(helmet());  // Enabled security headers
+```
+
+### 5.2 Cross-site Scripting Prevention (RSPEC-5131)
+
+Applications must prevent cross-site scripting (XSS) attacks by properly escaping output.
+
+```typescript
+// Noncompliant
+function displayUser(name: string) {
+    document.write("<div>" + name + "</div>");  // Direct DOM manipulation
+    element.innerHTML = `Welcome ${name}!`;     // Unescaped interpolation
+    div.innerHTML = userInput;                  // Raw user input
+}
+
+// Noncompliant
+const template = `
+    <div onclick="alert('${message}')">        // Unescaped in event handler
+        ${userContent}                         // Unescaped in content
+    </div>
+`;
+
+// Compliant
+function displayUser(name: string) {
+    const div = document.createElement('div');
+    div.textContent = name;                    // Automatic escaping
+    element.appendChild(div);
+
+    // If HTML is needed:
+    const sanitized = DOMPurify.sanitize(name);
+    element.innerHTML = sanitized;
+}
+
+// Compliant
+const template = `
+    <div>
+        <span>${escapeHtml(message)}</span>    // Properly escaped
+        ${sanitizeContent(userContent)}        // Sanitized content
+    </div>
+`;
+```

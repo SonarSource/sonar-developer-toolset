@@ -1,0 +1,114 @@
+---
+description: Enforces best practices for TypeScript development, including coding standards, performance considerations, and common pitfalls. This rule provides actionable guidance for developers to write clean, maintainable, and scalable TypeScript code.
+globs: *.ts?(x)
+alwaysApply: false
+---
+
+# TypeScript Code Generation Rules
+
+These rules represent the specific, enforceable constraints that are applied during TypeScript code generation.
+
+## 1. Type Safety Rules
+
+- **Type Declarations:**
+    - Every variable must have an explicit type or clear type inference
+    - Every function parameter must have an explicit type
+    - Every function must have an explicit return type
+    - No 'any' type unless explicitly requested
+    - Async functions must explicitly return Promise<T>
+    - No unnecessary async/await on direct promise returns
+
+- **Null Safety:**
+    - All nullable values must be explicitly marked with union types (e.g., string | null)
+    - Null checks required before accessing potentially null values
+    - Optional parameters must have type annotations with '?'
+    - Optional properties must be marked with '?'
+
+- **Type Narrowing:**
+    - Use type guards for runtime type checks
+    - Exhaustive type checking in switch statements
+    - Proper type narrowing in if-else chains
+    - Type assertion only with type guards
+
+- **Type Aliases and Unions:**
+    - Use type aliases for repeated union types
+    - Use literal types for fixed value sets
+    - Use discriminated unions for type narrowing
+    - No inline union types used more than once
+
+- **Object Type Patterns:**
+    - Use Record<K, V> for dynamic key objects
+    - Use Pick<T, K> for type subsets
+    - Use Omit<T, K> for type exclusions
+    - Use Partial<T> for optional fields
+    - Use Required<T> for mandatory fields
+    - Use Readonly<T> for immutable types
+
+## 2. Code Generation Rules
+
+- **Naming:**
+    - Interfaces: PascalCase with 'I' prefix
+    - Types: PascalCase
+    - Variables: camelCase
+    - Constants: UPPER_SNAKE_CASE
+    - Private members: camelCase with '_' prefix
+
+- **Exports:**
+    - Named exports only (no default exports)
+    - One type/interface per export statement
+    - Export lists at the end of files
+    - Re-exports must preserve original type names
+
+- **Imports:**
+    - No wildcard imports
+    - Named imports only
+    - Type imports separated from value imports
+    - No circular dependencies
+
+## 3. Class Generation Rules
+
+- **Class Structure:**
+    - Properties declared before methods
+    - Private properties marked with private keyword
+    - Readonly properties marked with readonly keyword
+    - Constructor parameters with access modifiers generate properties
+
+- **Method Requirements:**
+    - Public methods must have JSDoc comments
+    - Protected/private methods must be marked as such
+    - Abstract methods must have implementations in non-abstract classes
+    - Override keyword required when implementing interface methods
+
+## 4. Interface Rules
+
+- **Interface Structure:**
+    - Each property must have a type annotation
+    - Each method must have parameter and return types
+    - Readonly properties must be marked as readonly
+    - Optional properties must be marked with '?'
+
+- **Generic Constraints:**
+    - Generic type parameters must have constraints when used
+    - Generic type parameters must be used in the interface
+    - Generic type parameters must follow naming conventions (T, U, K, V)
+    - Bounded type parameters must use extends keyword
+
+## 5. Error Handling Rules
+
+- **Error Types:**
+    - Custom errors must extend Error class
+    - Error types must be explicitly declared
+    - Error handling must use type-safe catch clauses
+    - Promise rejection types must be explicitly handled
+
+## 6. TypeScript Compiler Rules
+
+- **Strict Mode Requirements:**
+    - strict: true
+    - noImplicitAny: true
+    - strictNullChecks: true
+    - strictFunctionTypes: true
+    - strictPropertyInitialization: true
+    - noImplicitThis: true
+    - noImplicitReturns: true
+
