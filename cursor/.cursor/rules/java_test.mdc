@@ -1,0 +1,11 @@
+---
+description: Tested with Claude-4-Sonnet : Original location : https://github.com/SonarSource/sonar-developer-toolset/cursor
+globs: ['**/src/test/**/*Test.java', '**/src/test/**/*IT.java']
+alwaysApply: false
+---
+
+# Java Test Constraints
+
+## Project Testing Patterns
+- **Always use extracting()** pattern in AssertJ instead of individual property assertions
+- **Records: Don't test auto-generated toString/equals/hashCode**

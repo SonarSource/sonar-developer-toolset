@@ -1,0 +1,12 @@
+---
+description: Tested with Claude-4-Sonnet : Original location : https://github.com/SonarSource/sonar-developer-toolset/cursor
+globs: *.py
+alwaysApply: false
+---
+
+# Python Constraints
+
+## Project Conventions
+- **Tests:** Must be in `./tests` directory with proper `__init__.py` files
+- **Docstrings:** Use Google convention for all functions and classes
+- **Type annotations:** Required for all functions including return types
