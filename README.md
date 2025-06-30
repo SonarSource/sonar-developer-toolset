@@ -106,14 +106,16 @@ On Windows, in Window > Preferences > General > Workspace, set "Text file encodi
 
 ## Code Style Configuration for Intellij
 
-Intellij IDEA users must install the plugin [Adapter for Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546) and import Eclipse settings files:
-* check the "Use the Eclipse code formatter" option and use [sonar-formatter.xml](/eclipse/sonar-formatter.xml) as the Eclipse Java Formatter config file
-* check the "From file" option in the "Import order" section and use [sonar.importorder](/eclipse/sonar.importorder)
+### Eclipse Code Formatter
+Intellij IDEA users must install the plugin [Adapter for Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546):
+* Check the `Use the Eclipse code formatter`
+* Set `Eclipse workspace/project folder or config file` to [sonar-formatter.xml](/eclipse/sonar-formatter.xml)
+* Check `Optimize Imports (IntelliJ's Import Optimizing must be turned ON)`
+* Set `Import Order from file` to [sonar.importorder](/eclipse/sonar.importorder)
+![Intellij code style](intellij/intellij-eclipse-formatter-config.png)
 
 You can either import the code style settings to IntelliJ IDEA by simply importing [this scheme](intellij/codestyle_sonar_developer_toolset.xml)
 in IDEA's code style settings (`Editor > 'Code Style' > Java > 'Scheme:' > ⚙️  > 'Import Scheme' > 'IntelliJ IDEA code style XML'`), or you can apply the settings manually (see below). The result should be the same.
-
-![Intellij code style](intellij/intellij-code-style.png)
 
 Go to `Preferences/Settings > Editor > General` and check the option `Ensure every saved file ends with a line break` (under the `On Save` section).
 
