@@ -200,10 +200,11 @@ Then to make sure prettier is run correctly, modify the on save actions:
 ![Intellij javascript onsave](intellij/intellij-javscript-actionsonsave.png)
 
 For Scala:
+Install [Scala plugin](https://plugins.jetbrains.com/plugin/1347-scala) if not installed already
 
-Go to `Preferences/Settings > Editor > Code Style > Scala > Imports` and update:
-* Class count to use import with '_' -> 999
-* Ensure `Merge imports with the same prefix into one statement` is checked
+Go to `Preferences/Settings > Editor > Code Style > Scala > Imports` then:
+* Set `Class count to use import with '_'` -> 999
+* Check `Merge imports with the same prefix into one statement`
 * Ensure to have the following `Import Layout` (it should be the default):
 
 ![Intellij scala import layout](intellij/intellij-scala-import-layout.PNG)
