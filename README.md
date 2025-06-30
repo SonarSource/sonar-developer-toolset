@@ -108,88 +108,107 @@ On Windows, in Window > Preferences > General > Workspace, set "Text file encodi
 
 ### Eclipse Code Formatter
 Intellij IDEA users must install the plugin [Adapter for Eclipse Code Formatter](http://plugins.jetbrains.com/plugin/?id=6546):
-* Check the `Use the Eclipse code formatter`
+* Check `Use the Eclipse code formatter`
 * Set `Eclipse workspace/project folder or config file` to [sonar-formatter.xml](/eclipse/sonar-formatter.xml)
 * Check `Optimize Imports (IntelliJ's Import Optimizing must be turned ON)`
 * Set `Import Order from file` to [sonar.importorder](/eclipse/sonar.importorder)
 ![Intellij code style](intellij/intellij-eclipse-formatter-config.png)
 
-You can either import the code style settings to IntelliJ IDEA by simply importing [this scheme](intellij/codestyle_sonar_developer_toolset.xml)
-in IDEA's code style settings (`Editor > 'Code Style' > Java > 'Scheme:' > ⚙️  > 'Import Scheme' > 'IntelliJ IDEA code style XML'`), or you can apply the settings manually (see below). The result should be the same.
+### General Editor
+Go to `Preferences/Settings > Editor > General`:
+* Check `Ensure every saved file ends with a line break` (under the `On Save` section).
 
-Go to `Preferences/Settings > Editor > General` and check the option `Ensure every saved file ends with a line break` (under the `On Save` section).
+Go to `Preferences/Settings > Editor > General > Auto import`:
+* Check `Optimize imports on the fly` for Java:
 
-Go to `Preferences/Settings > Editor > Code Style > Java > Wrapping and Braces > Method declaration parameter` and uncheck `Align when multiline`
+![image](https://user-images.githubusercontent.com/50145663/135304815-0b51f1da-16d4-4fc7-a278-a13067e78d7c.png)
 
-Go to `Preferences/Settings > Editor > Code Style > Java > Tabs and Indents` and update:
-* `Tab size: 2`
-* `Indent: 2`
-* `Continuation indent: 2`
+### Automatic IntelliJ Code Style
+You can either import the code style settings to IntelliJ IDEA by simply importing [this scheme](intellij/codestyle_sonar_developer_toolset.xml) in IDEA's code style settings (`Editor > 'Code Style' > Java > 'Scheme' > ⚙️  > 'Import Scheme' > 'IntelliJ IDEA code style XML'`),
+or you can apply the settings manually (see below). The result should be the same.
 
-Go to `Preferences/Settings > Editor > Code Style > Java > JavaDoc > Other` and uncheck `Generate "<p>" on empty lines`
+### Manual Java Code Style
+Follow these steps to set code style settings if not using [this scheme](intellij/codestyle_sonar_developer_toolset.xml) from above.
+
+Go to `Preferences/Settings > Editor > Code Style > Java > Tabs and Indents`:
+* Set `Tab size` to 2
+* Set `Indent` to 2
+* Set `Continuation indent` to 2
 
 ![Intellij imports](intellij/intellij-java-indents.png)
 
-Go to `Preferences/Settings > Editor > Code Style > Kotlin > Tabs and Indents` and update:
-* `Continuation indent: 4`
+Go to `Preferences/Settings > Editor > Code Style > Java > Wrapping and Braces > Method declaration parameter`:
+* Uncheck `Align when multiline`
+
+Go to `Preferences/Settings > Editor > Code Style > Java > JavaDoc > Other`:
+* Uncheck `Generate "<p>" on empty lines`
+
+Go to `Preferences/Settings > Editor > Code Style > Java > Imports`
+* Set `Class count to use import with '*'` to 999
+* Set `Names count to use static import with '*'` to 999
+* Remove both lines from `Packages to Use Import with '*'`
+* Set `Import Layout` to:
+  * `import all other imports`
+  * `<blank line>`
+  * `import static all other imports`
+  * `import module imports`
+
+![Intellij imports](intellij/intellij-imports.png)
+
+### Manual Kotlin Code Style
+Go to `Preferences/Settings > Editor > Code Style > Kotlin > Tabs and Indents`:
+* Set `Tab size` to 4
+* Set `Indent` to 4
+* Set `Continuation indent` to 4
 
 ![Kotlin indents](intellij/intellij-kotlin-indents.png)
 
-Go to `Preferences/Settings > Editor > Code Style > Kotlin > Imports` and update:
-* Check `Use single name import` in `Top-Level Symbols`
-* Check `Use single name import` in `Java Statics and Enum Members`
+Go to `Preferences/Settings > Editor > Code Style > Kotlin > Imports`:
+* Select `Use single name import` in `Top-Level Symbols`
+* Select `Use single name import` in `Java Statics and Enum Members`
 * Remove all entries from the list `Packages to Use Imports with '*'`
 
 ![Kotlin imports](intellij/intellij-kotlin-imports.png)
 
-Go to `Preferences/Settings > Editor > Code Style > Kotlin > Other` and update:
+Go to `Preferences/Settings > Editor > Code Style > Kotlin > Other`:
 * Check `Use trailing comma`
   
 ![Kotlin other](intellij/intellij-kotlin-other.png)
 
 For Kotlin, we use the default 140 character line length.
 
-Go to `Preferences/Settings > Editor > Code Style > XML > Tabs and Indents` and update:
-* `Tab size: 2`
-* `Indent: 2`
-* `Continuation indent: 2`
+### Manual XML Code Style
+
+Go to `Preferences/Settings > Editor > Code Style > XML > Tabs and Indents`:
+* Set `Tab size` to 2
+* Set `Indent` to 2
+* Set `Continuation indent` to 2
 
 ![Intellij XML code style other](intellij/intellij-xml-indents.png)
-
-Then go to `Preferences/Settings > Editor > Code Style > XML > Other` and set/check:
-* `Hard wrap at 140`
-* `Keep line breaks in text`
-* `Keep white spaces`
+Go to `Preferences/Settings > Editor > Code Style > XML > Other`:
+* Set `Hard wrap at` to 140
+* Check `Keep line breaks in text`
+* Check `Keep white spaces`
 
 ![Intellij XML code style other](intellij/intellij-xml-other.png)
 
+### Manual Groovy Code Style
+
 In order to correctly format build.gradle files, code style for Groovy has to be set.
 
-Then go to `Preferences/Settings > Editor > Code Style > Groovy` and set/check:
-* `Tab size: 2`
-* `Indent: 2`
-* `Continuation indent: 2`
+Go to `Preferences/Settings > Editor > Code Style > Groovy`:
+* Set `Tab size` to 2
+* Set `Indent` to 2
+* Set `Continuation indent` to 2
 
 ![Intellij Groovy code style](intellij/intellij-groovy-indents.png)
 
-IDEA must also be manually configured for imports : `Preferences/Settings > Editor > Code Style > Java > Imports`
-* Class count to use import with '*'" -> 999
-* Names count to use static import with '*' -> 999
-* Remove both lines from `Packages to Use Import with '*'`
-* Import Layout
-  * import all other imports
-  * &lt;blank line&gt;
-  * import static all other imports
-    
-![Intellij imports](intellij/intellij-imports.png)
+### Manual JavaScript/TypeScript Code Style
+For Javascript (Typescript)
+Go to `Preferences/Settings > Editor > Code Style > TypeScript > Imports`:
+* Check `Sort imported members`
+* Check `Sort imports by modules`
 
-Then go to `Preferences/Settings > Editor > General > Auto import` and check "Optimize imports on the fly" for Java:
-
-![image](https://user-images.githubusercontent.com/50145663/135304815-0b51f1da-16d4-4fc7-a278-a13067e78d7c.png)
-
-For Javascript (Typescript) 
-
-Setup imports to sort correctly:
 ![Intellij typescript](intellij/intellij-typescript-imports.png)
 
 We use a tool called **Prettier**. In order to ensure it functions correctly, install the [Prettier plugin](https://www.jetbrains.com/help/idea/prettier.html).
@@ -201,11 +220,11 @@ The Prettier plugin requires IntelliJ Ultimate, but it's possible to use it with
 Then to make sure prettier is run correctly, modify the on save actions:
 ![Intellij javascript onsave](intellij/intellij-javscript-actionsonsave.png)
 
-For Scala:
+### Manual Scala Code Style
 Install [Scala plugin](https://plugins.jetbrains.com/plugin/1347-scala) if not installed already
 
-Go to `Preferences/Settings > Editor > Code Style > Scala > Imports` then:
-* Set `Class count to use import with '_'` -> 999
+Go to `Preferences/Settings > Editor > Code Style > Scala > Imports`:
+* Set `Class count to use import with '_'` to 999
 * Check `Merge imports with the same prefix into one statement`
 * Ensure to have the following `Import Layout` (it should be the default):
 
@@ -213,6 +232,6 @@ Go to `Preferences/Settings > Editor > Code Style > Scala > Imports` then:
 
 ## (Optional) Build Configuration for Intellij
 
-If the project uses maven and you experience problems with the built-in build system (*Build* ➡️ *Rebuild Project*) like long build times or build failures, you should [delegate the build to maven](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#delegate_to_maven). Make sure to skip tests during the build:
+If the project uses maven, and you experience problems with the built-in build system (*Build* ➡️ *Rebuild Project*) like long build times or build failures, you should [delegate the build to maven](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#delegate_to_maven). Make sure to skip tests during the build:
 
 ![Intellij-maven-runner](intellij/intellij-maven-runner.png)
