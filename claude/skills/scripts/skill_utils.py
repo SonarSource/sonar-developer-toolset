@@ -1,218 +1,144 @@
 #!/usr/bin/env python3
 """
-Utility functions for managing Claude skills from multiple sources.
-
-This module provides functions to locate and manage skills from both:
-1. Local user skills in ~/.claude/skills/
-2. Shared repo skills in <script-location>/../lib/
+Utility functions for managing Claude skills.
 """
 
+import anthropic
 import os
 import sys
-from typing import Tuple, Optional, List, Dict
+from datetime import datetime
+from typing import Tuple, Optional, List, Dict, Any
 
-def get_script_directory():
-    """Get the directory where the current script is located"""
-    return os.path.dirname(os.path.abspath(sys.argv[0]))
+BETA_VERSION = "skills-2025-10-02"
+SKILL_FILENAME = "SKILL.md"
 
-def get_repo_skills_directory():
-    """Get the shared skills directory in the repo"""
-    script_dir = get_script_directory()
-    # New structure: scripts are in 'scripts/' and skills are in 'lib/'
-    possible_paths = [
-        os.path.join(script_dir, "..", "lib"),      # scripts/ -> lib/
-        os.path.join(script_dir, "..", "skills"),  # legacy: scripts/ -> skills/
-        os.path.join(script_dir, "lib"),           # same level as scripts/
-        os.path.join(script_dir, "skills"),        # legacy: same directory
-    ]
-    
-    for path in possible_paths:
-        if os.path.exists(path):
-            return os.path.abspath(path)
-    return None
 
-def get_local_skills_directory():
-    """Get the user's local skills directory"""
-    return os.path.expanduser("~/.claude/skills")
 
-def parse_skill_reference(skill_ref: str) -> Tuple[str, str]:
-    """
-    Parse skill reference - now pure path only.
-    
-    Args:
-        skill_ref: Path to skill folder (relative or absolute)
-        
-    Returns:
-        Tuple of ('path', skill_path) - always path mode
-    """
-    return 'path', skill_ref
-
-def find_skill_path(skill_path: str, source: str = 'path') -> Tuple[Optional[str], Optional[str]]:
-    """
-    Find the path to a skill's SKILL.md file - pure path mode.
-    
-    Args:
-        skill_path: Path to skill folder
-        source: Always 'path' (parameter kept for compatibility)
-        
-    Returns:
-        Tuple of (skill_md_path, 'path') or (None, None) if not found
-    """
-    # Expand and resolve the path
+def find_skill_path(skill_path: str) -> Optional[str]:
+    """Find the path to a skill's SKILL.md file"""
     skill_folder = os.path.abspath(os.path.expanduser(skill_path))
-    skill_md_path = os.path.join(skill_folder, "SKILL.md")
+    skill_md_path = os.path.join(skill_folder, SKILL_FILENAME)
     
     if os.path.exists(skill_md_path):
-        return skill_md_path, 'path'
+        return skill_md_path
     
-    return None, None
+    return None
 
-def list_all_skills() -> Dict[str, List[Dict]]:
-    """
-    List all available skills from both sources.
-    
-    Returns:
-        Dict with 'local' and 'repo' keys, each containing list of skill info dicts
-    """
-    skills = {'local': [], 'repo': []}
-    
-    # Local skills
-    local_dir = get_local_skills_directory()
-    if os.path.exists(local_dir):
-        for item in os.listdir(local_dir):
-            skill_dir = os.path.join(local_dir, item)
-            skill_file = os.path.join(skill_dir, "SKILL.md")
+def list_skills_in_directory(directory_path: str) -> List[Dict]:
+    """List all skills in a given directory"""
+    skills = []
+    if os.path.exists(directory_path):
+        for item in os.listdir(directory_path):
+            skill_dir = os.path.join(directory_path, item)
+            skill_file = os.path.join(skill_dir, SKILL_FILENAME)
             if os.path.isdir(skill_dir) and os.path.exists(skill_file):
-                skills['local'].append({
+                skills.append({
                     'name': item,
-                    'path': skill_file,
-                    'source': 'local'
+                    'path': skill_file
                 })
-    
-    # Repo skills
-    repo_dir = get_repo_skills_directory()
-    if repo_dir and os.path.exists(repo_dir):
-        for item in os.listdir(repo_dir):
-            skill_dir = os.path.join(repo_dir, item)
-            skill_file = os.path.join(skill_dir, "SKILL.md")
-            if os.path.isdir(skill_dir) and os.path.exists(skill_file):
-                skills['repo'].append({
-                    'name': item,
-                    'path': skill_file,
-                    'source': 'repo'
-                })
-    
     return skills
 
 def get_skill_display_title(skill_path: str) -> str:
     """Extract skill folder name to use as display title"""
-    # Extract just the folder name from the path - use it directly for better matching
-    skill_name = os.path.basename(skill_path.rstrip('/\\'))
-    return skill_name
+    return os.path.basename(skill_path.rstrip('/\\'))
 
 def extract_skill_name(skill_md_path: str) -> str:
-    """Extract name from SKILL.md file YAML front matter"""
+    """Extract name from SKILL.md file YAML frontmatter"""
     try:
         with open(skill_md_path, 'r', encoding='utf-8') as f:
             content = f.read()
             
-        # Check for YAML front matter first
         if content.startswith('---'):
             parts = content.split('---', 2)
             if len(parts) >= 2:
-                yaml_section = parts[1]
-                for line in yaml_section.split('\n'):
+                for line in parts[1].split('\n'):
                     line = line.strip()
                     if line.startswith('name:'):
-                        name = line.replace('name:', '').strip()
-                        return name
-                        
-        # Fallback: use folder name
-        folder_name = os.path.basename(os.path.dirname(skill_md_path))
-        return folder_name
+                        return line.replace('name:', '').strip()
+        
+        return "Unnamed Skill"
         
     except Exception:
-        folder_name = os.path.basename(os.path.dirname(skill_md_path))
-        return folder_name
+        return "Unnamed Skill"
 
 def extract_skill_description(skill_md_path: str) -> str:
-    """Extract description from SKILL.md file"""
+    """Extract description from SKILL.md file YAML frontmatter"""
     try:
         with open(skill_md_path, 'r', encoding='utf-8') as f:
             content = f.read()
             
-        # Check for YAML front matter first
         if content.startswith('---'):
             parts = content.split('---', 2)
             if len(parts) >= 2:
-                yaml_section = parts[1]
-                for line in yaml_section.split('\n'):
+                for line in parts[1].split('\n'):
                     line = line.strip()
                     if line.startswith('description:'):
                         desc = line.replace('description:', '').strip()
-                        if len(desc) > 120:
-                            desc = desc[:117] + "..."
-                        return desc
-                        
-        lines = content.split('\n')
-        description_lines = []
-        found_description = False
-        in_yaml = False
+                        return desc[:117] + "..." if len(desc) > 120 else desc
         
-        for line in lines:
-            line = line.strip()
-            
-            # Skip YAML front matter
-            if line == '---':
-                in_yaml = not in_yaml
-                continue
-            if in_yaml:
-                continue
-                
-            # Skip headers, @DisplayName, and empty lines
-            if (line.startswith('#') or 
-                line.startswith('@') or 
-                not line):
-                continue
-                
-            # Look for description-like content
-            if not found_description:
-                if (line.startswith('You are') or 
-                    line.startswith('This skill') or
-                    line.startswith('An expert') or
-                    line.startswith('A comprehensive') or
-                    ('expert' in line.lower() and ('specializ' in line.lower() or 
-                                                   'focus' in line.lower() or
-                                                   'help' in line.lower()))):
-                    found_description = True
-                    description_lines.append(line)
-                continue
-            
-            # Stop at next major section marker or bullet points
-            if (line.startswith('##') or 
-                line.startswith('###') or
-                line.startswith('-') or 
-                line.startswith('*') or
-                line.startswith('1.') or
-                line.startswith('```')):
-                break
-                
-            # Continue collecting description lines
-            if line:
-                description_lines.append(line)
-        
-        # Join and clean up
-        description = ' '.join(description_lines).strip()
-        
-        # Remove common prefixes and clean up
-        description = description.replace('@DisplayName', '').strip()
-        
-        # Truncate if too long
-        if len(description) > 120:
-            description = description[:117] + "..."
-            
-        return description if description else "Expert skill for specialized assistance"
+        return "No description available"
         
     except Exception:
-        return "Description unavailable"
+        return "No description available"
+
+def get_anthropic_client() -> anthropic.Anthropic:
+    """Initialize and return Anthropic client with proper error handling"""
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        print("❌ Error: ANTHROPIC_API_KEY environment variable is not set")
+        print("💡 Please set your API key: export ANTHROPIC_API_KEY='your-key-here'")
+        sys.exit(1)
+    
+    try:
+        return anthropic.Anthropic(api_key=api_key)
+    except Exception as e:
+        print(f"❌ Error: Failed to initialize Anthropic client")
+        print(f"💡 Please check your ANTHROPIC_API_KEY is valid")
+        print(f"📝 Details: {e}")
+        sys.exit(1)
+
+def handle_anthropic_errors(func, *args, **kwargs):
+    """Common error handling for Anthropic API calls"""
+    try:
+        return func(*args, **kwargs)
+    except anthropic.AuthenticationError:
+        print("❌ Error: Invalid API key")
+        print("💡 Please check your ANTHROPIC_API_KEY is correct")
+        sys.exit(1)
+    except anthropic.PermissionDeniedError:
+        print("❌ Error: Permission denied")
+        print("💡 Please check your API key has skills permissions")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        sys.exit(1)
+
+def format_date(iso_string: Any) -> str:
+    """Format ISO date string to readable format"""
+    if not iso_string:
+        return "N/A"
+    try:
+        dt = datetime.fromisoformat(str(iso_string).replace('Z', '+00:00'))
+        return dt.strftime('%Y-%m-%d %H:%M')
+    except (ValueError, TypeError):
+        return str(iso_string)[:16]
+
+def find_skill_by_id_or_title(client: anthropic.Anthropic, identifier: str) -> Tuple[Optional[Any], Optional[str]]:
+    """Find skill by ID or display title"""
+    skills = client.beta.skills.list(betas=[BETA_VERSION])
+    
+    for skill in skills.data:
+        if skill.id == identifier:
+            return skill, "id"
+    
+    for skill in skills.data:
+        if skill.display_title == identifier:
+            return skill, "title"
+    
+    title_from_folder = identifier.replace("-", " ").title()
+    for skill in skills.data:
+        if skill.display_title == title_from_folder:
+            return skill, "converted_title"
+            
+    return None, None
 
