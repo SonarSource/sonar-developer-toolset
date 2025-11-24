@@ -159,7 +159,7 @@ python list_skills.py
 
 **Sample Output:**
 ```
-✅ Found 1 skill(s):
+✅ Found 2 skill(s):
 
 Display Title             Version      Created            Updated           
 Skill ID                                          
@@ -167,23 +167,28 @@ Skill ID
 java-unit-testing         1            2024-01-15 10:30   2024-01-15 10:30  
   ID: skill_abc123xyz789
 
-📊 Total: 1 skill(s) deployed to Anthropic
+logging-best-practices    1            2024-01-14 14:22   2024-01-16 08:15
+  ID: skill_def456uvw012
+
+📊 Total: 2 skills deployed to Anthropic
 
 ==========================================================================
-📁 AVAILABLE SKILLS TO DEPLOY:
+📁 AVAILABLE SKILLS
 ==========================================================================
 
 ✅ Found 2 available skill(s):
 
-📚 Name: java-unit-testing
-   Path: lib/java-unit-testing
+✅ DEPLOYED java-unit-testing
+   Name: Java Unit Testing Helper
    Description: Helps with creating comprehensive unit tests for Java code
-   Deploy: python scripts/create_skill.py lib/java-unit-testing
+   Path: /path/to/repo/claude/skills/lib/java-unit-testing/SKILL.md
 
-📚 Name: logging-best-practices
-   Path: lib/logging-best-practices
+✅ DEPLOYED logging-best-practices
+   Name: Logging Best Practices
    Description: Guidelines for implementing effective logging in applications
-   Deploy: python scripts/create_skill.py lib/logging-best-practices
+   Path: /path/to/repo/claude/skills/lib/logging-best-practices/SKILL.md
+
+📊 Total: 2 skills available (all deployed)
 ```
 
 ### 4. Delete a Skill

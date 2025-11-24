@@ -123,6 +123,36 @@ def format_date(iso_string: Any) -> str:
     except (ValueError, TypeError):
         return str(iso_string)[:16]
 
+def get_skills_directories() -> List[str]:
+    """Get list of directories to search for skills"""
+    dirs = []
+    
+    # Check user's home directory
+    home_skills_dir = os.path.expanduser("~/.claude/skills")
+    if os.path.exists(home_skills_dir):
+        dirs.append(home_skills_dir)
+    
+    # Check repository lib directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_skills_dir = os.path.join(script_dir, "..", "lib")
+    repo_skills_dir = os.path.abspath(repo_skills_dir)
+    if os.path.exists(repo_skills_dir):
+        dirs.append(repo_skills_dir)
+    
+    return dirs
+
+def list_all_skills() -> List[Dict]:
+    """List all available skills from both user directory and repository"""
+    all_skills = []
+    
+    for directory in get_skills_directories():
+        skills = list_skills_in_directory(directory)
+        for skill in skills:
+            skill['directory'] = directory
+        all_skills.extend(skills)
+    
+    return all_skills
+
 def find_skill_by_id_or_title(client: anthropic.Anthropic, identifier: str) -> Tuple[Optional[Any], Optional[str]]:
     """Find skill by ID or display title"""
     skills = client.beta.skills.list(betas=[BETA_VERSION])
