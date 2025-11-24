@@ -63,8 +63,6 @@ claude/
     ├── lib/                # Shared skills library
     │   ├── java-unit-testing/
     │   │   └── SKILL.md
-    │   ├── code-review/
-    │   │   └── SKILL.md
     │   └── logging-best-practices/
     │       └── SKILL.md
     └── README.md          # This file
@@ -79,7 +77,7 @@ This tool uses **direct paths only** for maximum clarity and flexibility. No mag
 ```bash
 # Deploy skills from lib/
 python scripts/create_skill.py lib/java-unit-testing
-python scripts/create_skill.py lib/code-review
+python scripts/create_skill.py lib/logging-best-practices
 
 # List deployed and available skills
 python scripts/list_skills.py
@@ -99,7 +97,6 @@ If you just want to use these skills personally in Claude Code without API regis
 ```bash
 # Copy skills to your local directory
 cp -r lib/java-unit-testing ~/.claude/skills/
-cp -r lib/code-review ~/.claude/skills/
 cp -r lib/logging-best-practices ~/.claude/skills/
 
 # Verify the structure
@@ -122,7 +119,6 @@ python create_skill.py <path-to-skill-folder>
 ```bash
 # Deploy skills from lib/
 python scripts/create_skill.py lib/java-unit-testing
-python scripts/create_skill.py lib/code-review
 python scripts/create_skill.py lib/logging-best-practices
 ```
 
@@ -163,7 +159,7 @@ python list_skills.py
 
 **Sample Output:**
 ```
-✅ Found 2 skill(s):
+✅ Found 1 skill(s):
 
 Display Title             Version      Created            Updated           
 Skill ID                                          
@@ -171,26 +167,18 @@ Skill ID
 java-unit-testing         1            2024-01-15 10:30   2024-01-15 10:30  
   ID: skill_abc123xyz789
 
-code-review               1            2024-01-14 14:22   2024-01-16 08:15
-  ID: skill_def456uvw012
-
-📊 Total: 2 skills deployed to Anthropic
+📊 Total: 1 skill(s) deployed to Anthropic
 
 ==========================================================================
 📁 AVAILABLE SKILLS TO DEPLOY:
 ==========================================================================
 
-✅ Found 3 available skill(s):
+✅ Found 2 available skill(s):
 
 📚 Name: java-unit-testing
    Path: lib/java-unit-testing
    Description: Helps with creating comprehensive unit tests for Java code
    Deploy: python scripts/create_skill.py lib/java-unit-testing
-
-📚 Name: code-review
-   Path: lib/code-review
-   Description: Provides guidance for thorough code reviews
-   Deploy: python scripts/create_skill.py lib/code-review
 
 📚 Name: logging-best-practices
    Path: lib/logging-best-practices
