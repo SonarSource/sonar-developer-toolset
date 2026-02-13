@@ -148,10 +148,10 @@ Go to `Preferences/Settings > Editor > Code Style > Java > Imports`
 * Set `Names count to use static import with '*'` to 999
 * Remove both lines from `Packages to Use Import with '*'`
 * Set `Import Layout` to:
-  * `import all other imports`
+  * `import module imports`
+  * `import all other imports;`
   * `<blank line>`
   * `import static all other imports`
-  * `import module imports`
 
 ![Intellij imports](intellij/intellij-imports.png)
 
